@@ -1,7 +1,7 @@
 import csv
-import datetime
-import dateutil.parser
-import numpy as np
+#import datetime
+#import dateutil.parser
+#import numpy as np
 
 def parse_csv(file):
     """
