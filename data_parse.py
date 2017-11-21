@@ -20,10 +20,17 @@ def parse_csv(file):
                 i += 1
             except ValueError:
                 pass
+    data_final = []
+    for row in data[1:]:
+        # parse the data
+        date = dateutil.parser.parse(row[1]+" "+row[2])
+        power_kw = row[3]
+        power_solar = row[4]
+        data_final.append([date, power_kw, power_solar])
 
-    return data
+    return data_final
 
 
 if __name__ == '__main__':
     site1 = parse_csv("site_1.csv")
-    print(site1)
+    print(site1[:10])
