@@ -24,7 +24,7 @@ def parse_csv(file):
             except ValueError:
                 pass
     data_final = []
-    for row in data[1:50]:  ## developing with a subset for speed
+    for row in data[1:1000]:  ## developing with a subset for speed
         # parse the data
         date = dateutil.parser.parse(row[1]+" "+row[2])
         power_kw = row[3]
@@ -69,11 +69,24 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
         for l in range(12):
             data[i].append(month == l)
         data[i].append(data[i][0].date() in holidays)
-        # add past 24 hours of demand
-        #d = 0
-        #try:
-        #for pd in range(96):
-        #    d += data[i -pd-1][1]
+        # past 24 hours of demand
+        d1 = []
+        for p1 in range(96):
+            d1.append(0)
+        for pa in range(96):
+            if i > pa:
+                d1[pa] += float(data[i -pa-1][1])
+        for p2 in d1:
+            data[i].append(p2)
+        # minimum load of last 3,6,12,24 periods
+        for pb in [3, 6, 12, 24]:
+            d2 = [621] #620.8 is the maximum value of all usages
+            for pb1 in range(pb):
+                if i > pb1:
+                    d2.append(float(data[i-pb1 - 1][1]))
+            data[i].append(min(d2))
+        print(len(data[i]))
+
     return data
 
 
@@ -81,5 +94,7 @@ if __name__ == '__main__':
     site1 = parse_csv("site_1.csv")
     print(site1[:10])
     print("t:")
-    t = generate_NN_features(site1[:10], parse_holidays("USBankholidays.txt"))
+    t = generate_NN_features(site1[:1000], parse_holidays("USBankholidays.txt"))
     print(t)
+    print("last 96:")
+    print(t[100])
