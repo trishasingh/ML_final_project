@@ -69,6 +69,11 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
         for l in range(12):
             data[i].append(month == l)
         data[i].append(data[i][0].date() in holidays)
+        # add past 24 hours of demand
+        #d = 0
+        #try:
+        #for pd in range(96):
+        #    d += data[i -pd-1][1]
     return data
 
 
