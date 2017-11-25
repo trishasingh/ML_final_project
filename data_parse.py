@@ -36,15 +36,14 @@ def parse_csv(file):
 def parse_holidays(file):
     """
     create array of holiday dates as data time objects from USBankHolidays.txt
-    :param data:
-    :return:
+    :param fule:
+    :return:array of holiday dates
     """
     with open(file, newline='\n') as csv_file:
         reader = csv.reader(csv_file)
         holidays = []
         for row in reader:
-            #holidays.append(dateutil.parser.parse(row[1]).date())
-            holidays.append(str(row[1]))
+            holidays.append(dateutil.parser.parse(row[1]).date())
         return holidays
 
 
@@ -69,9 +68,7 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
         month = data[i][0].month
         for l in range(12):
             data[i].append(month == l)
-        print(holidays[20])
-        print(data[i][0].date())
-        data.append(data[i][0].date().isoformat() in holidays)  #I DO NOT KNOW WHY THIS IS NOT WORKING. THEY ARE BOTH STRINGS. ALSO TRIED DATETIME OBJECTS
+        data[i].append(data[i][0].date() in holidays)
     return data
 
 
