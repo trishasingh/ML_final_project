@@ -57,20 +57,26 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
 
     for i in range(len(data)):
         hour = data[i][0].hour
+        # booleans for hour of the day
         for h in range(24):
             data[i].append(hour == h)
+        # booleans for day of week
         wd = data[i][0].weekday()
         for k in range(7):
             data[i].append(wd == k)
+        # booleans for day of the month
         md = data[i][0].day
         for j in range(31):
             data[i].append(md == j)
+        # booleans for month of the year
         month = data[i][0].month
         for l in range(12):
             data[i].append(month == l)
         data[i].append(data[i][0].date() in holidays)
         # past 24 hours of demand
         d1 = []
+        # energy usage for each of the last 96 periods
+        # if it is one of the first 96 periods, fill in zeros
         for p1 in range(96):
             d1.append(0)
         for pa in range(96):
@@ -92,7 +98,7 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
                 if i > pb1:
                     d2.append(float(data[i-pb1 - 1][1]))
             data[i].append(max(d2))
-        #add load of the same hour in previous week, previous 4 weeks same day
+        # load of the same hour in all days of the previous week
         pc = []
         for pc1 in range(6):
             pc.append(0)
@@ -100,7 +106,7 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
                 pc[pc1] = float(data[i - 96 * (pc1 + 1)][1])
         for pc2 in pc:
             data[i].append(pc2)
-        # add load of the same hour in previous 4 weeks on the same day
+        # load of the same hour on the same weekday in previous 4 weeks
         pd = []
         for pd1 in range(4):
             pd.append(0)
