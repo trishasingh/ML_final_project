@@ -117,6 +117,22 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
 
     return data
 
+def write_data(data):
+    """
+    wites the unlabeled data to a csv file
+    :param data: data to write
+    :return:
+    """
+
+    with open("data.csv", "w+") as data_file:
+        writer = csv.writer(data_file)
+        for row in data:
+            writer.writerow(row[1:])
+
+
+
+
+
 
 if __name__ == '__main__':
     site1 = parse_csv("site_1.csv")
@@ -127,3 +143,4 @@ if __name__ == '__main__':
     print("100th example:")
     print(t[100])
     print(len(t[100]))
+    write_data(t)
