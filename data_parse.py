@@ -92,8 +92,22 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
                 if i > pb1:
                     d2.append(float(data[i-pb1 - 1][1]))
             data[i].append(max(d2))
-        #add load of the same hour in previous week, previous week same day
-        #print(len(data[i]))
+        #add load of the same hour in previous week, previous 4 weeks same day
+        pc = []
+        for pc1 in range(6):
+            pc.append(0)
+            if i > 96 * (pc1 + 1):
+                pc[pc1] = float(data[i - 96 * (pc1 + 1)][1])
+        for pc2 in pc:
+            data[i].append(pc2)
+        # add load of the same hour in previous 4 weeks on the same day
+        pd = []
+        for pd1 in range(4):
+            pd.append(0)
+            if i > 96 * 7 * (pc1 + 1):
+                pd[pd1] = float(data[i - 96 * 7 * (pd1 + 1)][1])
+        for pd2 in pd:
+            data[i].append(pd2)
 
     return data
 
@@ -106,3 +120,4 @@ if __name__ == '__main__':
     #print(t)
     print("100th example:")
     print(t[100])
+    print(len(t[100]))
