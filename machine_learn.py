@@ -6,13 +6,24 @@ from keras import backend as K
 from keras.models import load_model
 import data_parse
 from matplotlib import pyplot as plt
+from keras import optimizers
+#import tensorflow as tf
+from keras.optimizers import TFOptimizer
+import os
 
-def run_nnet(d):
+
+
+def run_nnet(d, gpu):
     """
     run nueral net for power predictions
     :param d: data to train on
+    :param gpu: use gpu optimization
     :return: model
     """
+    #K.set_floatx('float64')
+    if gpu:
+        os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+
     m = len(d)
     n = len(d[0]) - 1
     x = np.zeros((m, n))
@@ -26,19 +37,21 @@ def run_nnet(d):
     dim1 = len(x)
     dim2 = len(x[0])
     # add the layers
-    model.add(Dense(dim1, input_dim=dim2, kernel_initializer='random_uniform'))
-    model.add(Dense(120, kernel_initializer='random_uniform'))
-    model.add(Dense(60, kernel_initializer='random_uniform'))
-    model.add(Dense(50, kernel_initializer='random_uniform'))
-    model.add(Dense(80, kernel_initializer='random_uniform'))
-    model.add(Dense(100, kernel_initializer='random_uniform'))
-    model.add(Dense(150, kernel_initializer='random_uniform'))
-    model.add(Dense(180, kernel_initializer='random_uniform'))
-    model.add(Dense(30, kernel_initializer='random_uniform'))
-    model.add(Dense(20, kernel_initializer='random_uniform'))
+    model.add(Dense(dim1, input_dim=dim2, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(120, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(60, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(80, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(100, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(150, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(180, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(30, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(20, kernel_initializer='random_uniform', activation='relu'))
     model.add(Dense(1, kernel_initializer='random_uniform'))
+
+    sgd = optimizers.SGD(lr=0.01, clipnorm=1.)
     # Compile model
-    model.compile(loss='mse', optimizer='rmsprop', metrics=["mae"])
+    model.compile(loss='mse', optimizer=sgd, metrics=["mae"])
     # Fit the model
     model.fit(x, y, epochs=20, batch_size=100, verbose=2, validation_split=0.2)
     return model

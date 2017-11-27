@@ -164,6 +164,7 @@ def read_data(file):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--skip', "-s", dest='skip', action='store_true', help="use to skip creation of data file")
+    parser.add_argument('--gpu', "-g", dest='gpu', action='store_true', help="use gpu optimization")
     args = parser.parse_args()
     # do we want to skip
     if not args.skip:
@@ -172,7 +173,7 @@ if __name__ == '__main__':
         write_data(t)
     d = read_data("data.csv")[10100:]
 
-    model = machine_learn.run_nnet(d)
+    model = machine_learn.run_nnet(d, args.gpu)
     # save the model
     model.save("models/model_"+datetime.datetime.now().strftime("%Y-%m-%d_%H_%M_%S") +".h5")
     #calculate predictions
