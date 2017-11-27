@@ -149,7 +149,9 @@ def read_data(file):
                     new_row.append(bool(item))
                 else:
                     new_row.append(float(item))
+            new_row = (np.array(new_row[1:]), np.array(new_row[0]))
             data.append(new_row)
+
     return data
 
 
@@ -175,8 +177,8 @@ if __name__ == '__main__':
     # split into training and validation:
     train_data = d[:500]
     valid_data = d[500:]
-    print( d[100])
-    net = nnet.Network([191, 20, 1])
+    print( len(d[100][0]))
+    net = nnet.Network([190, 20, 1])
 
     print("training")
     net.train(train_data, valid_data, epochs=10, mini_batch_size=10, alpha=0.0)
