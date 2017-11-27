@@ -4,6 +4,7 @@ import numpy as np
 import tensorflow as tf
 from keras import backend as K
 from keras.models import load_model
+import data_parse
 
 def run_nnet(d):
     """
@@ -28,6 +29,8 @@ def run_nnet(d):
     model.add(Dense(15, kernel_initializer='uniform'))
     model.add(Dense(50, kernel_initializer='uniform'))
     model.add(Dense(8, kernel_initializer='uniform'))
+    model.add(Dense(100, kernel_initializer='uniform'))
+    model.add(Dense(30, kernel_initializer='uniform'))
     model.add(Dense(20, kernel_initializer='uniform'))
     model.add(Dense(1, kernel_initializer='uniform'))
     # Compile model
@@ -37,5 +40,15 @@ def run_nnet(d):
     return model
 
 if __name__ == "__main__":
-    model = load_model("models/model_2017-11-27_02_30_21.h5")
-    #model.evaluate()
+    model = load_model("models/model_2017-11-27_13_06_18.h5")
+    d = data_parse.read_data("data.csv")[5100:]
+    m = len(d)
+    n = len(d[0]) - 1
+    x = np.zeros((m, n))
+    y = np.zeros((m, 1))
+    for i in range(m):
+        x[i] = d[i][1:]
+        y[i] = d[i][0]
+    print("Evaluating model...")
+    evaluation = model.evaluate(x=x, y=y, verbose=0)
+    print("Loss(mse): "+str(evaluation[0])+"     Mean Absolute Error: " + str(evaluation[1]))
