@@ -170,7 +170,7 @@ if __name__ == '__main__':
         site1 = parse_csv("site_1.csv")
         t = generate_NN_features(site1, parse_holidays("USBankholidays.txt"))
         write_data(t)
-    d = read_data("data.csv")[5100:]
+    d = read_data("data.csv")[10100:]
 
     model = machine_learn.run_nnet(d)
     # save the model

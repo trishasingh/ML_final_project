@@ -26,23 +26,26 @@ def run_nnet(d):
     dim1 = len(x)
     dim2 = len(x[0])
     # add the layers
-    model.add(Dense(dim1, input_dim=dim2, kernel_initializer='uniform'))
-    model.add(Dense(15, kernel_initializer='uniform'))
-    model.add(Dense(50, kernel_initializer='uniform'))
-    model.add(Dense(8, kernel_initializer='uniform'))
-    model.add(Dense(100, kernel_initializer='uniform'))
-    model.add(Dense(30, kernel_initializer='uniform'))
-    model.add(Dense(20, kernel_initializer='uniform'))
-    model.add(Dense(1, kernel_initializer='uniform'))
+    model.add(Dense(dim1, input_dim=dim2, kernel_initializer='random_uniform'))
+    model.add(Dense(120, kernel_initializer='random_uniform'))
+    model.add(Dense(60, kernel_initializer='random_uniform'))
+    model.add(Dense(50, kernel_initializer='random_uniform'))
+    model.add(Dense(80, kernel_initializer='random_uniform'))
+    model.add(Dense(100, kernel_initializer='random_uniform'))
+    model.add(Dense(150, kernel_initializer='random_uniform'))
+    model.add(Dense(180, kernel_initializer='random_uniform'))
+    model.add(Dense(30, kernel_initializer='random_uniform'))
+    model.add(Dense(20, kernel_initializer='random_uniform'))
+    model.add(Dense(1, kernel_initializer='random_uniform'))
     # Compile model
     model.compile(loss='mse', optimizer='rmsprop', metrics=["mae"])
     # Fit the model
-    model.fit(x, y, epochs=15, batch_size=100, verbose=2, validation_split=0.2)
+    model.fit(x, y, epochs=20, batch_size=100, verbose=2, validation_split=0.2)
     return model
 
 
 if __name__ == "__main__":
-    model = load_model("models/model_2017-11-27_13_06_18.h5")
+    model = load_model("models/model_2017-11-27_15_19_39.h5")
     d = data_parse.read_data("data.csv")[10100:15100]
     m = len(d)
     n = len(d[0]) - 1
@@ -52,8 +55,8 @@ if __name__ == "__main__":
         x[i] = d[i][1:]
         y[i] = d[i][0]
     print("Evaluating model...")
-    #evaluation = model.evaluate(x=x, y=y, verbose=1, batch_size=300)
-    #print("Loss(mse): "+str(evaluation[0])+"     Mean Absolute Error: " + str(evaluation[1]))
+    evaluation = model.evaluate(x=x, y=y, verbose=1, batch_size=300)
+    print("Loss(mse): "+str(evaluation[0])+"     Mean Absolute Error: " + str(evaluation[1]))
     predictions = model.predict(x)
     plt.plot(predictions,'r', y, 'g')
     plt.show()
