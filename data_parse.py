@@ -4,7 +4,6 @@ import dateutil.parser
 import numpy as np
 import matplotlib.pyplot
 import argparse
-
 import nnet
 
 
@@ -31,8 +30,8 @@ def parse_csv(file):
         date = dateutil.parser.parse(row[1]+" "+row[2])
         power_kw = row[3]
         power_solar = row[4]
-        data_final.append([[date, power_solar], power_kw])
-        # make it a tuple to make it suitable for nnet application
+        data_final.append([date, power_kw, power_solar])
+
     return data_final
 
 def parse_holidays(file):
@@ -58,23 +57,23 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
     """
 
     for i in range(len(data)):
-        hour = data[i][0][0].hour
+        hour = data[i][0].hour
         # booleans for hour of the day
         for h in range(24):
-            data[i][0].append(hour == h)
+            data[i].append(hour == h)
         # booleans for day of week
-        wd = data[i][0][0].weekday()
+        wd = data[i][0].weekday()
         for k in range(7):
-            data[i][0].append(wd == k)
+            data[i].append(wd == k)
         # booleans for day of the month
-        md = data[i][0][0].day
+        md = data[i][0].day
         for j in range(31):
-            data[i][0].append(md == j)
+            data[i].append(md == j)
         # booleans for month of the year
-        month = data[i][0][0].month
+        month = data[i][0].month
         for l in range(12):
-            data[i][0].append(month == l)
-        data[i][0].append(data[i][0][0].date() in holidays)
+            data[i].append(month == l)
+        data[i].append(data[i][0].date() in holidays)
         # past 24 hours of demand
         d1 = []
         # energy usage for each of the last 96 periods
@@ -83,41 +82,44 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
             d1.append(0)
         for pa in range(96):
             if i > pa:
-                d1[pa] += float(data[i -pa-1][0][1])
+                d1[pa] += float(data[i -pa-1][1])
         for p2 in d1:
-            data[i][0].append(p2)
+            data[i].append(p2)
         # minimum load of last 12, 24, 48, 96 periods (3,6,12,24 hours)
         for pb in [12, 24, 48, 96]:
             d2 = [621] #620.8 is the maximum value of all usages
             for pb1 in range(pb):
                 if i > pb1:
-                    d2.append(float(data[i-pb1 - 1][0][1]))
-            data[i][0].append(min(d2))
+                    d2.append(float(data[i-pb1 - 1][1]))
+            data[i].append(min(d2))
         # maximum load of last 12, 24, 48, 96 periods (3,6,12,24 hours)
         for pb in [12, 24, 48, 96]:
             d2 = [0]
             for pb1 in range(pb):
                 if i > pb1:
-                    d2.append(float(data[i-pb1 - 1][0][1]))
-            data[i][0].append(max(d2))
+                    d2.append(float(data[i-pb1 - 1][1]))
+            data[i].append(max(d2))
         # load of the same hour in all days of the previous week
         pc = []
         for pc1 in range(6):
             pc.append(0)
             if i > 96 * (pc1 + 1):
-                pc[pc1] = float(data[i - 96 * (pc1 + 1)][0][1])
+                pc[pc1] = float(data[i - 96 * (pc1 + 1)][1])
         for pc2 in pc:
-            data[i][0].append(pc2)
+            data[i].append(pc2)
         # load of the same hour on the same weekday in previous 4 weeks
         pd = []
         for pd1 in range(4):
             pd.append(0)
             if i > 96 * 7 * (pc1 + 1):
-                pd[pd1] = float(data[i - 96 * 7 * (pd1 + 1)][0][1])
+                pd[pd1] = float(data[i - 96 * 7 * (pd1 + 1)][1])
         for pd2 in pd:
-            data[i][0].append(pd2)
+            data[i].append(pd2)
 
     return data
+
+
+
 def write_data(data):
     """
     wites the unlabeled data to a csv file
@@ -128,7 +130,7 @@ def write_data(data):
     with open("data.csv", "w+") as data_file:
         writer = csv.writer(data_file)
         for row in data:
-            writer.writerow(row[0][1:].append(row[1]))
+            writer.writerow(row[1:])
 
 
 def read_data(file):
