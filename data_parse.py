@@ -1,12 +1,10 @@
 import csv
-import datetime
 import dateutil.parser
 import numpy as np
 import matplotlib.pyplot
 import argparse
-import nnet
-from keras.models import Sequential
-from keras.layers import Dense
+
+import machine_learn
 
 seed = 7 #fix random seed for reproducibility
 np.random.seed(seed)
@@ -166,36 +164,19 @@ def read_data(file):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--skip', "-s", dest='skip', action='store_false', help="use to skip creation of data file")
+    parser.add_argument('--custom', "-c", dest='custom', action='store_true', help="use if custom gpu settings apply")
+    parser.add_argument('--gpu', "-g", dest='gpu', action='store_true', help="use if machine has gpu")
+
     args = parser.parse_args()
     if args.skip:
         site1 = parse_csv("site_1.csv")
         t = generate_NN_features(site1, parse_holidays("USBankholidays.txt"))
         write_data(t)
     d = read_data("data.csv")[10100:40100]
-
-    #print(d[:3])
     m = len(d)
     n = len(d[0]) - 1
     x = np.zeros((m, n))
-    y = np.zeros((m, 1))
-    for i in range(m):
-        x[i] = d[i][1:]
-        y[i] = d[i][0]
-
-    # create model
-    model = Sequential()
-    dim1= len(x)
-    dim2 = len(x[0])
-    model.add(Dense(dim1, input_dim=dim2, init='uniform'))
-    model.add(Dense(15, init='uniform'))
-    model.add(Dense(8, init='uniform'))
-    model.add(Dense(20, init='uniform'))
-    model.add(Dense(1, init='uniform'))
-    # Compile model
-    model.compile(loss='mse', optimizer='rmsprop', metrics=["mae"])
-    # Fit the model
-    model.fit(x, y, epochs=10, batch_size=200, verbose=2, validation_split=0.2)
-    #model.evaluate(x_cv, y_cv, batch_size=20)
+    model = machine_learn.run_nnet(d, args.gpu, args.custom)
     #calculate predictions
     predictions = model.predict(x)
     # round predictions
