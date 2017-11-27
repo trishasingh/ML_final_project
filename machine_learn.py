@@ -58,7 +58,7 @@ def run_nnet(d, gpu):
 
 
 if __name__ == "__main__":
-    model = load_model("models/model_2017-11-27_15_19_39.h5")
+    model = load_model("models/model_2017-11-27_16_58_48.h5")
     d = data_parse.read_data("data.csv")[10100:15100]
     m = len(d)
     n = len(d[0]) - 1
