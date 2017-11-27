@@ -124,6 +124,20 @@ if __name__ == '__main__':
     print("t:")
     t = generate_NN_features(site1[:1000], parse_holidays("USBankholidays.txt"))
     #print(t)
+
     print("100th example:")
     print(t[100])
     print(len(t[100]))
+
+    # split into training and validation:
+    train_data = t[:500]
+    valid_data = t[500:]
+
+    net = nnet.Network([192, 20, 1])
+
+    print("training")
+    net.train(train_data, valid_data, epochs=10, mini_batch_size=10, alpha=0.0)
+
+
+    ncorrect = net.evaluate(valid_data)
+    print("Validation accuracy: %.3f%%" % (100 * ncorrect / len(valid_data)))
