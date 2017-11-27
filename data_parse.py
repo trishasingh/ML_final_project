@@ -179,20 +179,30 @@ if __name__ == '__main__':
         write_data(t)
     d = read_data("data.csv")
 
-    print(d[:3])
-    x = d[1][1:]
-    y = d[1][0]
+    #print(d[:3])
+    m = len(d)
+    n = len(d[0]) - 1
+    x = np.zeros((m, n))
+    y = np.zeros((m, 1))
+    for i in range(m):
+        x[i] = d[i][1:]
+        y[i] = d[i][0]
 
-    # # split into training and validation:
-    # train_data = d[:500]
-    # valid_data = d[500:]
-    # #print( len(d[100][0]))
-    # net = nnet.Network([190, 20, 1])
-    #
-    # #print("training")
-    # net.train(train_data, valid_data, epochs=10, mini_batch_size=10, alpha=0.0)
-    #
-    #
-    # ncorrect = net.evaluate(valid_data)
-    # print("Validation accuracy: %.3f%%" % (100 * ncorrect / len(valid_data)))
+    print(np.shape(x))
 
+    # create model
+    model = Sequential()
+    dim1= len(x)
+    dim2 = len(x[0])
+    model.add(Dense(m, input_dim=dim2, init='uniform', activation='relu'))
+    model.add(Dense(8, init='uniform', activation='relu'))
+    model.add(Dense(1, init='uniform', activation='tanh'))
+    # Compile model
+    model.compile(loss='mean_squared_error', optimizer='sgd', metrics=['accuracy'])
+    # Fit the model
+    model.fit(x, y, epochs=20, batch_size=10, verbose=2)
+    # calculate predictions
+    predictions = model.predict(x)
+    # round predictions
+    rounded = [round(x[0]) for x in predictions]
+    print(rounded)
