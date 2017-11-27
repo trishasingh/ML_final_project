@@ -43,6 +43,7 @@ def run_nnet(d, gpu, custom):
     # add the layers
     model.add(Dense(dim1, input_dim=dim2, kernel_initializer='uniform'))
     model.add(Dense(15, kernel_initializer='uniform'))
+    model.add(Dense(50, kernel_initializer='uniform'))
     model.add(Dense(8, kernel_initializer='uniform'))
     model.add(Dense(20, kernel_initializer='uniform'))
     model.add(Dense(1, kernel_initializer='uniform'))
@@ -50,10 +51,4 @@ def run_nnet(d, gpu, custom):
     model.compile(loss='mse', optimizer='rmsprop', metrics=["mae"])
     # Fit the model
     model.fit(x, y, epochs=10, batch_size=200, verbose=2, validation_split=0.2)
-    # model.evaluate(x_cv, y_cv, batch_size=20)
-    # calculate predictions
-    #predictions = model.predict(x)
-    # round predictions
-    #rounded = [round(x[0]) for x in predictions]
-    #print(rounded)
     return model
