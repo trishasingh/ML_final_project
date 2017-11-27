@@ -188,20 +188,25 @@ if __name__ == '__main__':
         x[i] = d[i][1:]
         y[i] = d[i][0]
 
-    print(np.shape(x))
+    m_train = 500
+    x_train = x[:m_train]
+    y_train = y[:m_train]
+    x_cv = x[m_train:]
+    y_cv = y[m_train:]
 
     # create model
     model = Sequential()
     dim1= len(x)
-    dim2 = len(x[0])
-    model.add(Dense(m, input_dim=dim2, init='uniform', activation='relu'))
-    model.add(Dense(8, init='uniform', activation='relu'))
-    model.add(Dense(1, init='uniform', activation='tanh'))
+    dim2 = len(x_train[0])
+    model.add(Dense(m_train, input_dim=dim2, init='uniform'))
+    model.add(Dense(8, init='uniform'))
+    model.add(Dense(1, init='uniform'))
     # Compile model
-    model.compile(loss='mean_squared_error', optimizer='sgd', metrics=['accuracy'])
+    model.compile(loss='mse', optimizer='rmsprop', metrics=['accuracy'])
     # Fit the model
-    model.fit(x, y, epochs=20, batch_size=10, verbose=2)
-    # calculate predictions
+    model.fit(x_train, y_train, epochs=10, batch_size=20, verbose=2)
+    #model.evaluate(x_cv, y_cv, batch_size=20)
+    #calculate predictions
     predictions = model.predict(x)
     # round predictions
     rounded = [round(x[0]) for x in predictions]
