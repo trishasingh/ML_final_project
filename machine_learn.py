@@ -5,6 +5,7 @@ import tensorflow as tf
 from keras import backend as K
 from keras.models import load_model
 import data_parse
+from matplotlib import pyplot as plt
 
 def run_nnet(d):
     """
@@ -51,5 +52,8 @@ if __name__ == "__main__":
         x[i] = d[i][1:]
         y[i] = d[i][0]
     print("Evaluating model...")
-    evaluation = model.evaluate(x=x, y=y, verbose=1, batch_size=300)
-    print("Loss(mse): "+str(evaluation[0])+"     Mean Absolute Error: " + str(evaluation[1]))
+    #evaluation = model.evaluate(x=x, y=y, verbose=1, batch_size=300)
+    #print("Loss(mse): "+str(evaluation[0])+"     Mean Absolute Error: " + str(evaluation[1]))
+    predictions = model.predict(x)
+    plt.plot(predictions,'r', y, 'g')
+    plt.show()
