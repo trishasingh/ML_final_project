@@ -3,7 +3,9 @@ import datetime
 import dateutil.parser
 import numpy as np
 import matplotlib.pyplot
+import argparse
 
+import nnet
 
 
 def parse_csv(file):
@@ -116,22 +118,55 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
             data[i][0].append(pd2)
 
     return data
+def write_data(data):
+    """
+    wites the unlabeled data to a csv file
+    :param data: data to write
+    :return:
+    """
+
+    with open("data.csv", "w+") as data_file:
+        writer = csv.writer(data_file)
+        for row in data:
+            writer.writerow(row[1:])
+
+
+def read_data(file):
+    """
+    reads the parsed data back as a list
+    :param file: file to read the data
+    :return:
+    """
+    with open(file) as data_file:
+        reader = csv.reader(data_file)
+        data = []
+        for row in reader:
+            data.append(row)
+    return data
+
+
 
 
 if __name__ == '__main__':
-    site1 = parse_csv("site_1.csv")
-    #print(site1[:10])
-    print("t:")
-    t = generate_NN_features(site1[:1000], parse_holidays("USBankholidays.txt"))
-    #print(t)
-
-    print("100th example:")
-    print(t[100])
-    print(len(t[100][0]))
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--skip', "-s", dest='skip', action='store_false', help="use to skip creation of data file")
+    args = parser.parse_args()
+    if args.skip:
+        site1 = parse_csv("site_1.csv")
+        #print(site1[:10])
+        print("t:")
+        t = generate_NN_features(site1[:1000], parse_holidays("USBankholidays.txt"))
+        #print(t)
+        print("100th example:")
+        print(t[100])
+        print(len(t[100]))
+        write_data(t)
+    d = read_data("data.csv")
+    print(d[100])
 
     # split into training and validation:
-    train_data = t[:500]
-    valid_data = t[500:]
+    train_data = d[:500]
+    valid_data = d[500:]
 
     net = nnet.Network([191, 20, 1])
 
