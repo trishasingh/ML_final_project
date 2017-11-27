@@ -1,3 +1,4 @@
+h5py
 numpy
 python-dateutil
 matplotlib

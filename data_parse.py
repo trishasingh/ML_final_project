@@ -1,9 +1,11 @@
 import csv
+import h5py
+import datetime
 import dateutil.parser
 import numpy as np
 import matplotlib.pyplot
 import argparse
-
+from keras.models import load_model
 import machine_learn
 
 seed = 7 #fix random seed for reproducibility
@@ -159,29 +161,22 @@ def read_data(file):
     return data
 
 
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--skip', "-s", dest='skip', action='store_false', help="use to skip creation of data file")
-    parser.add_argument('--custom', "-c", dest='custom', action='store_true', help="use if custom gpu settings apply")
-    parser.add_argument('--gpu', "-g", dest='gpu', action='store_true', help="use if machine has gpu")
-
+    parser.add_argument('--skip', "-s", dest='skip', action='store_true', help="use to skip creation of data file")
     args = parser.parse_args()
-    if args.skip:
+    # do we want to skip
+    if not args.skip:
         site1 = parse_csv("site_1.csv")
         t = generate_NN_features(site1, parse_holidays("USBankholidays.txt"))
         write_data(t)
-    d = read_data("data.csv")[10100:50100]
-    m = len(d)
-    n = len(d[0]) - 1
-    x = np.zeros((m, n))
-    for i in range(m):
-        x[i] = d[i][1:]
+    d = read_data("data.csv")[10100:80100]
 
-    model = machine_learn.run_nnet(d, args.gpu, args.custom)
+    model = machine_learn.run_nnet(d)
+    # save the model
+    model.save("models/model_"+datetime.datetime.now().strftime("%Y-%m-%d_%H_%M_%S") +".h5")
     #calculate predictions
-    predictions = model.predict(x)
+    #predictions = model.predict(x)
     # round predictions
-    rounded = [round(x[0]) for x in predictions]
-    print(rounded)
+    #rounded = [round(x[0]) for x in predictions]
+    #print(rounded)
