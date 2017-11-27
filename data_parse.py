@@ -11,6 +11,7 @@ import machine_learn
 seed = 7 #fix random seed for reproducibility
 np.random.seed(seed)
 
+#Jonah test
 def parse_csv(file):
     """
     parse data from CSV files into an array
