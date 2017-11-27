@@ -145,8 +145,10 @@ def read_data(file):
         for row in reader:
             new_row = []
             for item in row:
-                if item == "True" or item =="False":
-                    new_row.append(bool(item))
+                if item == "True":
+                    new_row.append(True)
+                elif item =="False":
+                    new_row.append(False)
                 else:
                     new_row.append(float(item))
             new_row = (np.array(new_row[1:]), np.array(new_row[0]))
