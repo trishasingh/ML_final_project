@@ -5,7 +5,11 @@ import numpy as np
 import matplotlib.pyplot
 import argparse
 import nnet
+from keras.models import Sequential
+from keras.layers import Dense
 
+seed = 7 #fix random seed for reproducibility
+np.random.seed(seed)
 
 def parse_csv(file):
     """
@@ -151,7 +155,7 @@ def read_data(file):
                     new_row.append(False)
                 else:
                     new_row.append(float(item))
-            new_row = (np.array(new_row[1:]), np.array(new_row[0]))
+            #new_row = (np.array(new_row[1:]), np.array(new_row[0]))
             data.append(new_row)
 
     return data
@@ -166,25 +170,29 @@ if __name__ == '__main__':
     if args.skip:
         site1 = parse_csv("site_1.csv")
         #print(site1[:10])
-        print("t:")
+        #print("t:")
         t = generate_NN_features(site1[:1000], parse_holidays("USBankholidays.txt"))
         #print(t)
-        print("100th example:")
-        print(t[100])
-        print(len(t[100]))
+        #print("100th example:")
+        #print(t[100])
+        #print(len(t[100]))
         write_data(t)
     d = read_data("data.csv")
-    print(d[100])
 
-    # split into training and validation:
-    train_data = d[:500]
-    valid_data = d[500:]
-    print( len(d[100][0]))
-    net = nnet.Network([190, 20, 1])
+    print(d[:3])
+    x = d[1][1:]
+    y = d[1][0]
 
-    print("training")
-    net.train(train_data, valid_data, epochs=10, mini_batch_size=10, alpha=0.0)
+    # # split into training and validation:
+    # train_data = d[:500]
+    # valid_data = d[500:]
+    # #print( len(d[100][0]))
+    # net = nnet.Network([190, 20, 1])
+    #
+    # #print("training")
+    # net.train(train_data, valid_data, epochs=10, mini_batch_size=10, alpha=0.0)
+    #
+    #
+    # ncorrect = net.evaluate(valid_data)
+    # print("Validation accuracy: %.3f%%" % (100 * ncorrect / len(valid_data)))
 
-
-    ncorrect = net.evaluate(valid_data)
-    print("Validation accuracy: %.3f%%" % (100 * ncorrect / len(valid_data)))

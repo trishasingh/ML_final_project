@@ -54,8 +54,8 @@ class Network(object):
 
         # vectorize outputs y in training data ("one hot" encoding)
         ny = self.sizes[-1]
-        train_data_vec = [(x, unit(y, ny)) for x, y in train_data]
-        
+        #train_data_vec = [(x, unit(y, ny)) for x, y in train_data]
+        train_data_vec = [(x, y) for x, y in train_data]
         m = len(train_data)
         for j in range(epochs):
             if not self.debug:
@@ -130,6 +130,7 @@ class Network(object):
         delta = [0] * n
         i = n-1 # index of last layer
         delta[i] = (a[i]-y) * sigmoid_grad(z[i])
+        print(np.shape(delta[i]))
         for i in range(n-2, 0, -1): # n-2 .. 1
             delta[i] = np.dot(self.weights[i].T, delta[i+1])*sigmoid_grad(z[i]) # FILL IN
 
@@ -138,6 +139,8 @@ class Network(object):
         grad_w = [np.zeros(w.shape) for w in self.weights]
         for i in range(0, n-1):
             grad_b[i] = delta[i+1]
+            #print(np.shape(delta[i+1]))
+            #print(np.shape(a[i].T))
             grad_w[i] = np.dot(delta[i+1], a[i].T)
 
         return (grad_b, grad_w)
@@ -188,6 +191,8 @@ def unit(j, n):
     """return n x 1 unit vector with 1.0 at index j and zeros elsewhere"""
 
     x = np.zeros((n,1))  ### FILL IN #3
+    print(j)
+    print()
     x[j] = 1
     return x
 
