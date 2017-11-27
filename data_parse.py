@@ -171,7 +171,7 @@ if __name__ == '__main__':
         site1 = parse_csv("site_1.csv")
         t = generate_NN_features(site1, parse_holidays("USBankholidays.txt"))
         write_data(t)
-    d = read_data("data.csv")
+    d = read_data("data.csv")[10100:40100]
 
     #print(d[:3])
     m = len(d)
@@ -182,23 +182,19 @@ if __name__ == '__main__':
         x[i] = d[i][1:]
         y[i] = d[i][0]
 
-    """m_train = len(x)
-    x_train = x[:m_train]
-    y_train = y[:m_train]
-    x_cv = x[m_train:]
-    y_cv = y[m_train:]"""
-
     # create model
     model = Sequential()
     dim1= len(x)
     dim2 = len(x[0])
     model.add(Dense(dim1, input_dim=dim2, init='uniform'))
+    model.add(Dense(15, init='uniform'))
     model.add(Dense(8, init='uniform'))
+    model.add(Dense(20, init='uniform'))
     model.add(Dense(1, init='uniform'))
     # Compile model
     model.compile(loss='mse', optimizer='rmsprop', metrics=["mae"])
     # Fit the model
-    model.fit(x, y, epochs=10, batch_size=20, verbose=2, validation_split=0.8)
+    model.fit(x, y, epochs=10, batch_size=200, verbose=2, validation_split=0.2)
     #model.evaluate(x_cv, y_cv, batch_size=20)
     #calculate predictions
     predictions = model.predict(x)
