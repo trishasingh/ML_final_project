@@ -3,6 +3,7 @@ from keras.layers import Dense
 import numpy as np
 import tensorflow as tf
 from keras import backend as K
+from keras.models import load_model
 
 def run_nnet(d):
     """
@@ -34,3 +35,7 @@ def run_nnet(d):
     # Fit the model
     model.fit(x, y, epochs=15, batch_size=1000, verbose=2, validation_split=0.2)
     return model
+
+if __name__ == "__main__":
+    model = load_model("models/model_2017-11-27_02_30_21.h5")
+    #model.evaluate()
