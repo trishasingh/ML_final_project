@@ -29,7 +29,7 @@ def parse_csv(file):
             except ValueError:
                 pass
     data_final = []
-    for row in data[1:1000]:  ## developing with a subset for speed
+    for row in data[1:]:  ## developing with a subset for speed
         # parse the data
         date = dateutil.parser.parse(row[1]+" "+row[2])
         power_kw = row[3]
@@ -169,13 +169,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if args.skip:
         site1 = parse_csv("site_1.csv")
-        #print(site1[:10])
-        #print("t:")
-        t = generate_NN_features(site1[:1000], parse_holidays("USBankholidays.txt"))
-        #print(t)
-        #print("100th example:")
-        #print(t[100])
-        #print(len(t[100]))
+        t = generate_NN_features(site1, parse_holidays("USBankholidays.txt"))
         write_data(t)
     d = read_data("data.csv")
 
@@ -188,23 +182,23 @@ if __name__ == '__main__':
         x[i] = d[i][1:]
         y[i] = d[i][0]
 
-    m_train = 500
+    """m_train = len(x)
     x_train = x[:m_train]
     y_train = y[:m_train]
     x_cv = x[m_train:]
-    y_cv = y[m_train:]
+    y_cv = y[m_train:]"""
 
     # create model
     model = Sequential()
     dim1= len(x)
-    dim2 = len(x_train[0])
-    model.add(Dense(m_train, input_dim=dim2, init='uniform'))
+    dim2 = len(x[0])
+    model.add(Dense(dim1, input_dim=dim2, init='uniform'))
     model.add(Dense(8, init='uniform'))
     model.add(Dense(1, init='uniform'))
     # Compile model
-    model.compile(loss='mse', optimizer='rmsprop', metrics=['accuracy'])
+    model.compile(loss='mse', optimizer='rmsprop', metrics=["mae"])
     # Fit the model
-    model.fit(x_train, y_train, epochs=10, batch_size=20, verbose=2)
+    model.fit(x, y, epochs=10, batch_size=20, verbose=2, validation_split=0.8)
     #model.evaluate(x_cv, y_cv, batch_size=20)
     #calculate predictions
     predictions = model.predict(x)
