@@ -128,7 +128,7 @@ def write_data(data):
     with open("data.csv", "w+") as data_file:
         writer = csv.writer(data_file)
         for row in data:
-            writer.writerow(row[1:])
+            writer.writerow(row[0][1:].append(row[1]))
 
 
 def read_data(file):
@@ -141,7 +141,13 @@ def read_data(file):
         reader = csv.reader(data_file)
         data = []
         for row in reader:
-            data.append(row)
+            new_row = []
+            for item in row:
+                if item == "True" or item =="False":
+                    new_row.append(bool(item))
+                else:
+                    new_row.append(float(item))
+            data.append(new_row)
     return data
 
 
@@ -167,7 +173,7 @@ if __name__ == '__main__':
     # split into training and validation:
     train_data = d[:500]
     valid_data = d[500:]
-
+    print( d[100])
     net = nnet.Network([191, 20, 1])
 
     print("training")
