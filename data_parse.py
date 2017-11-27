@@ -3,6 +3,7 @@ import datetime
 import dateutil.parser
 import numpy as np
 import matplotlib.pyplot
+import argparse
 
 
 
@@ -148,14 +149,18 @@ def read_data(file):
 
 
 if __name__ == '__main__':
-    site1 = parse_csv("site_1.csv")
-    #print(site1[:10])
-    print("t:")
-    t = generate_NN_features(site1[:1000], parse_holidays("USBankholidays.txt"))
-    #print(t)
-    print("100th example:")
-    print(t[100])
-    print(len(t[100]))
-    write_data(t)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--skip', "-s", dest='skip', action='store_false', help="use to skip creation of data file")
+    args = parser.parse_args()
+    if args.skip:
+        site1 = parse_csv("site_1.csv")
+        #print(site1[:10])
+        print("t:")
+        t = generate_NN_features(site1[:1000], parse_holidays("USBankholidays.txt"))
+        #print(t)
+        print("100th example:")
+        print(t[100])
+        print(len(t[100]))
+        write_data(t)
     d = read_data("data.csv")
     print(d[100])
