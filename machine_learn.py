@@ -37,13 +37,13 @@ def run_nnet(d):
     # Compile model
     model.compile(loss='mse', optimizer='rmsprop', metrics=["mae"])
     # Fit the model
-    model.fit(x, y, epochs=15, batch_size=1000, verbose=2, validation_split=0.2)
+    model.fit(x, y, epochs=15, batch_size=100, verbose=2, validation_split=0.2)
     return model
 
 
 if __name__ == "__main__":
     model = load_model("models/model_2017-11-27_13_06_18.h5")
-    d = data_parse.read_data("data.csv")[5100:]
+    d = data_parse.read_data("data.csv")[10100:15100]
     m = len(d)
     n = len(d[0]) - 1
     x = np.zeros((m, n))
