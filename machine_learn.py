@@ -39,6 +39,7 @@ def run_nnet(d):
     model.fit(x, y, epochs=15, batch_size=1000, verbose=2, validation_split=0.2)
     return model
 
+
 if __name__ == "__main__":
     model = load_model("models/model_2017-11-27_13_06_18.h5")
     d = data_parse.read_data("data.csv")[5100:]
@@ -50,5 +51,5 @@ if __name__ == "__main__":
         x[i] = d[i][1:]
         y[i] = d[i][0]
     print("Evaluating model...")
-    evaluation = model.evaluate(x=x, y=y, verbose=0)
+    evaluation = model.evaluate(x=x, y=y, verbose=1, batch_size=300)
     print("Loss(mse): "+str(evaluation[0])+"     Mean Absolute Error: " + str(evaluation[1]))
