@@ -1,6 +1,7 @@
 from keras.models import Sequential
 from keras.layers import Dense
 import numpy as np
+import argparse
 import tensorflow as tf
 from keras import backend as K
 from keras.models import load_model
@@ -58,8 +59,11 @@ def run_nnet(d, gpu):
 
 
 if __name__ == "__main__":
-    model = load_model("models/model_2017-11-27_16_58_48.h5")
-    d = data_parse.read_data("data.csv")[10100:15100]
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--model', "-m", dest='model', action='store', required=True, help="model name to use")
+    args = parser.parse_args()
+    model = load_model("models/"+args.model)
+    d = data_parse.read_data("data.csv")[50100:60100]
     m = len(d)
     n = len(d[0]) - 1
     x = np.zeros((m, n))
@@ -71,5 +75,7 @@ if __name__ == "__main__":
     evaluation = model.evaluate(x=x, y=y, verbose=1, batch_size=300)
     print("Loss(mse): "+str(evaluation[0])+"     Mean Absolute Error: " + str(evaluation[1]))
     predictions = model.predict(x)
-    plt.plot(predictions,'r', y, 'g')
+    plt.plot(predictions, 'r', label="prediction")
+    plt.plot(y, 'g', label='actual', linewidth=.5)
+    leg = plt.legend()
     plt.show()
