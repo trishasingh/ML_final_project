@@ -1,15 +1,15 @@
+# Group Members:
+# Graham, Trisha, Jonah
 import csv
-import h5py
 import datetime
 import dateutil.parser
 import numpy as np
-import matplotlib.pyplot
 import argparse
-from keras.models import load_model
 import machine_learn
 
 seed = 7 #fix random seed for reproducibility
 np.random.seed(seed)
+
 
 def parse_csv(file):
     """
@@ -38,11 +38,12 @@ def parse_csv(file):
 
     return data_final
 
+
 def parse_holidays(file):
     """
-    create array of holiday dates as data time objects from USBankHolidays.txt
-    :param fule:
-    :return:array of holiday dates
+    Create array of holiday dates as data time objects from USBankHolidays.txt.
+    :param file: Holiday file
+    :return: array of holiday dates
     """
     with open(file, newline='\n') as csv_file:
         reader = csv.reader(csv_file)
@@ -54,12 +55,11 @@ def parse_holidays(file):
 
 def generate_NN_features(data, holidays): # based off features used in Gajowniczek paper
     """
-    generate features for the dataset
-    :param data:
-    :param holidays:
-    :return:
+    Generate features for the data-set.
+    :param data: parsed raw data
+    :param holidays: parsed holiday info
+    :return: features
     """
-
     for i in range(len(data)):
         hour = data[i][0].hour
         # booleans for hour of the day
@@ -126,11 +126,9 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
 
 def write_data(data):
     """
-    wites the unlabeled data to a csv file
+    Writes the unlabeled data to a csv file.
     :param data: data to write
-    :return:
     """
-
     with open("data.csv", "w+") as data_file:
         writer = csv.writer(data_file)
         for row in data:
@@ -139,9 +137,9 @@ def write_data(data):
 
 def read_data(file):
     """
-    reads the parsed data back as a list
+    Reads the parsed data back as a list.
     :param file: file to read the data
-    :return:
+    :return: features
     """
     with open(file) as data_file:
         reader = csv.reader(data_file)
@@ -149,13 +147,13 @@ def read_data(file):
         for row in reader:
             new_row = []
             for item in row:
+                # Convert boolean strings to bools.
                 if item == "True":
                     new_row.append(True)
                 elif item =="False":
                     new_row.append(False)
                 else:
                     new_row.append(float(item))
-            #new_row = (np.array(new_row[1:]), np.array(new_row[0]))
             data.append(new_row)
 
     return data
@@ -166,18 +164,14 @@ if __name__ == '__main__':
     parser.add_argument('--skip', "-s", dest='skip', action='store_true', help="use to skip creation of data file")
     parser.add_argument('--gpu', "-g", dest='gpu', action='store_true', help="use gpu optimization")
     args = parser.parse_args()
-    # do we want to skip
+    # Do we want to skip?
     if not args.skip:
         site1 = parse_csv("site_1.csv")
         t = generate_NN_features(site1, parse_holidays("USBankholidays.txt"))
         write_data(t)
+    # Read in data.
     d = read_data("data.csv")[10100:]
-
-    model = machine_learn.run_nnet(d, args.gpu)
-    # save the model
+    x, y = machine_learn.format_data(d)
+    model = machine_learn.run_nnet(x, y, args.gpu)
+    # Save the model.
     model.save("models/model_"+datetime.datetime.now().strftime("%Y-%m-%d_%H_%M_%S") +".h5")
-    #calculate predictions
-    #predictions = model.predict(x)
-    # round predictions
-    #rounded = [round(x[0]) for x in predictions]
-    #print(rounded)
