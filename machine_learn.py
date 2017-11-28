@@ -8,7 +8,6 @@ from keras.models import load_model
 import data_parse
 from matplotlib import pyplot as plt
 from keras import optimizers
-from keras.optimizers import TFOptimizer
 import os
 
 
@@ -74,7 +73,7 @@ if __name__ == "__main__":
     evaluation = model.evaluate(x=x, y=y, verbose=1, batch_size=300)
     print("Loss(mse): "+str(evaluation[0])+"     Mean Absolute Error: " + str(evaluation[1]))
 
-    # Plot the predictions
+    # Plot the predictions.
     predictions = model.predict(x)
     plt.plot(predictions, 'r', label="prediction")
     plt.plot(y, 'g', label='actual', linewidth=.5)

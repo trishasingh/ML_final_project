@@ -10,6 +10,7 @@ import machine_learn
 seed = 7 #fix random seed for reproducibility
 np.random.seed(seed)
 
+MAX_LOAD = 621
 
 def parse_csv(file):
     """
@@ -29,8 +30,9 @@ def parse_csv(file):
             except ValueError:
                 pass
     data_final = []
-    for row in data[1:]:  ## developing with a subset for speed
-        # parse the data
+    # Skip the label row.
+    for row in data[1:]:
+        # Parse the data.
         date = dateutil.parser.parse(row[1]+" "+row[2])
         power_kw = row[3]
         power_solar = row[4]
@@ -62,26 +64,26 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
     """
     for i in range(len(data)):
         hour = data[i][0].hour
-        # booleans for hour of the day
+        # Booleans for hour of the day.
         for h in range(24):
             data[i].append(hour == h)
-        # booleans for day of week
+        # Booleans for day of week.
         wd = data[i][0].weekday()
         for k in range(7):
             data[i].append(wd == k)
-        # booleans for day of the month
+        # Booleans for day of the month.
         md = data[i][0].day
         for j in range(31):
             data[i].append(md == j)
-        # booleans for month of the year
+        # Booleans for month of the year.
         month = data[i][0].month
         for l in range(12):
             data[i].append(month == l)
         data[i].append(data[i][0].date() in holidays)
-        # past 24 hours of demand
+        # Past 24 hours of demand.
         d1 = []
-        # energy usage for each of the last 96 periods
-        # if it is one of the first 96 periods, fill in zeros
+        # Energy usage for each of the last 96 periods.
+        # If it is one of the first 96 periods, fill in zeros.
         for p1 in range(96):
             d1.append(0)
         for pa in range(96):
@@ -89,21 +91,21 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
                 d1[pa] += float(data[i -pa-1][1])
         for p2 in d1:
             data[i].append(p2)
-        # minimum load of last 12, 24, 48, 96 periods (3,6,12,24 hours)
+        # Minimum load of last 12, 24, 48, 96 periods (3,6,12,24 hours).
         for pb in [12, 24, 48, 96]:
-            d2 = [621] #620.8 is the maximum value of all usages
+            d2 = [MAX_LOAD]
             for pb1 in range(pb):
                 if i > pb1:
                     d2.append(float(data[i-pb1 - 1][1]))
             data[i].append(min(d2))
-        # maximum load of last 12, 24, 48, 96 periods (3,6,12,24 hours)
+        # Maximum load of last 12, 24, 48, 96 periods (3,6,12,24 hours).
         for pb in [12, 24, 48, 96]:
             d2 = [0]
             for pb1 in range(pb):
                 if i > pb1:
                     d2.append(float(data[i-pb1 - 1][1]))
             data[i].append(max(d2))
-        # load of the same hour in all days of the previous week
+        # Load of the same hour in all days of the previous week.
         pc = []
         for pc1 in range(6):
             pc.append(0)
@@ -111,7 +113,7 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
                 pc[pc1] = float(data[i - 96 * (pc1 + 1)][1])
         for pc2 in pc:
             data[i].append(pc2)
-        # load of the same hour on the same weekday in previous 4 weeks
+        # Load of the same hour on the same weekday in previous 4 weeks.
         pd = []
         for pd1 in range(4):
             pd.append(0)
@@ -121,7 +123,6 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
             data[i].append(pd2)
 
     return data
-
 
 
 def write_data(data):
@@ -147,7 +148,7 @@ def read_data(file):
         for row in reader:
             new_row = []
             for item in row:
-                # Convert boolean strings to bools.
+                # Convert boolean strings to booleans.
                 if item == "True":
                     new_row.append(True)
                 elif item =="False":
