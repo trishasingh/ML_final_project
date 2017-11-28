@@ -27,6 +27,7 @@ def format_data(data):
         y[i] = data[i][0]
     return x, y
 
+
 def run_nnet(x, y, gpu):
     """
     Run neural net for power predictions.
