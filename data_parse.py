@@ -173,7 +173,7 @@ if __name__ == '__main__':
         t = generate_NN_features(site1, parse_holidays("USBankholidays.txt"))
         write_data(t)
     # Read in data.
-    d = read_data("data.csv")[10100:]
+    d = read_data("data.csv")[10100:] #edit dataset size here
     x, y = machine_learn.format_data(d)
     model = machine_learn.run_nnet(x, y, args.gpu)
     # Save the model.
