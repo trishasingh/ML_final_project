@@ -18,12 +18,12 @@ def format_data(data):
     :return: features x, labels y
     """
     m = len(data)
-    n = len(data[0]) - 1
+    n = len(data[0]) - 2
     x = np.zeros((m, n))
     y = np.zeros((m, 1))
     for i in range(m):
-        x[i] = data[i][1:]
-        y[i] = data[i][0]
+        x[i] = data[i][2:]
+        y[i] = data[i][1]
     return x, y
 
 
@@ -60,6 +60,20 @@ def run_nnet(x, y, gpu):
     # Fit the model.
     model.fit(x, y, epochs=20, batch_size=100, verbose=2, validation_split=0.2)
     return model
+
+
+def forward_predict(x, y, model, periods):
+    """
+    Propagate predictions forward to forecast demand.
+    :param x: features
+    :param y: labels
+    :param model: model to use
+    :param periods: number of examples forward to forecast
+    :return:
+    """
+    predictions = []
+    for i in range(periods):
+        predictions = model.predict(x)
 
 
 if __name__ == "__main__":

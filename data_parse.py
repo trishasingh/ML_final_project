@@ -133,7 +133,7 @@ def write_data(data):
     with open("data.csv", "w+") as data_file:
         writer = csv.writer(data_file)
         for row in data:
-            writer.writerow(row[1:])
+            writer.writerow(row)
 
 
 def read_data(file):
@@ -147,14 +147,16 @@ def read_data(file):
         data = []
         for row in reader:
             new_row = []
-            for item in row:
+            for item in range(len(row)):
+                if item == 0:
+                    new_row.append(dateutil.parser.parse(row[item]))
                 # Convert boolean strings to booleans.
-                if item == "True":
+                elif row[item]== "True":
                     new_row.append(True)
-                elif item =="False":
+                elif row[item] =="False":
                     new_row.append(False)
                 else:
-                    new_row.append(float(item))
+                    new_row.append(float(row[item]))
             data.append(new_row)
 
     return data
