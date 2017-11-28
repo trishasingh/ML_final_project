@@ -60,9 +60,9 @@ def run_nnet(d, gpu):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', "-m", dest='model', action='store', required=True, help="model name to use")
+    parser.add_argument('--model', "-m", dest='model', action='store', required=True, help="path to model being used")
     args = parser.parse_args()
-    model = load_model("models/"+args.model)
+    model = load_model(args.model)
     d = data_parse.read_data("data.csv")[50100:60100]
     m = len(d)
     n = len(d[0]) - 1
