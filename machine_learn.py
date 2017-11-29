@@ -144,7 +144,7 @@ def forward_predict(x, y, initial_date, model, periods):
     holidays = set(data_parse.parse_holidays("USBankholidays.txt"))
     for i in range(periods):
         p = model.predict(x)
-        last = p[-1]*30/31
+        last = p[-1]
         new = [initial_date+timedelta(minutes=15)]
         initial_date = initial_date+timedelta(minutes=15)
         # Add each prediction
@@ -153,7 +153,7 @@ def forward_predict(x, y, initial_date, model, periods):
             y= np.append(y, [last])
         new = add_generate_NN_features(y, new, holidays)
         x = np.append(x, [new], axis=0)
-        print("Forecast number: " + str(i)+" of "+str(periods)+" Predicted val: "+str(last))
+        print("Forecast number: " + str(i+1)+" of "+str(periods)+" Predicted val: "+str(last))
     return predictions
 
 
