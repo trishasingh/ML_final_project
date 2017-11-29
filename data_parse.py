@@ -170,7 +170,7 @@ if __name__ == '__main__':
     # Do we want to skip?
     if not args.skip:
         site1 = parse_csv("site_1.csv")
-        t = generate_NN_features(site1, parse_holidays("USBankholidays.txt"))
+        t = generate_NN_features(site1, set(parse_holidays("USBankholidays.txt")))
         write_data(t)
     # Read in data.
     d = read_data("data.csv")[10100:] #edit dataset size here
