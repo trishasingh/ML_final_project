@@ -111,3 +111,4 @@ smart-meters-in-london.zip
 .DS_Store
 
 models/*
+data.csv
