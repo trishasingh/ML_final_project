@@ -176,7 +176,7 @@ if __name__ == '__main__':
     # Do we train?
     if not args.no:
         # Read in data.
-        d = read_data("data.csv")[10100:] #edit dataset size here
+        d = read_data("data.csv")[10100:15100] #edit dataset size here
         x, y = machine_learn.format_data(d)
         model = machine_learn.run_nnet(x, y, args.gpu)
         # Save the model.
