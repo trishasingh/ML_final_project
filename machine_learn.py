@@ -77,18 +77,18 @@ def run_nnet(x, y, gpu):
 
     # Tuning
     model.add(Dense(dim1, input_dim=dim2, kernel_initializer='random_uniform', activation='relu'))
-    model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
-    model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
-    model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
-    model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
-    model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
-    model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
-    model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
-    model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
-    model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
-    model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
-    model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
-    model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
+    #model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
+    #model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
     model.add(Dense(1, kernel_initializer='random_uniform'))
     # Set the optimizer.
     #sgd = optimizers.SGD(lr=0.01, clipnorm=2.)#, momentum=0.1, nesterov=True)
@@ -103,7 +103,7 @@ def run_nnet(x, y, gpu):
     else:
         # Fit the model.
         # Feel free to change this batch size.
-        model.fit(x, y, epochs=25, batch_size=1000, verbose =2, validation_split=0.2)
+        model.fit(x, y, epochs=100, batch_size=4096, verbose =2, validation_split=0.2)
     return model
 
 
