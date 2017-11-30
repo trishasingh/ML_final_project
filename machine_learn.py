@@ -9,6 +9,7 @@ import data_parse
 from matplotlib import pyplot as plt
 from keras import optimizers
 import os
+from keras import backend as K
 import time, datetime
 from datetime import datetime, timedelta
 
@@ -23,9 +24,16 @@ def format_data(data):
     n = len(data[0]) - 2
     x = np.zeros((m, n))
     y = np.zeros((m, 1))
+
     for i in range(m):
-        x[i] = data[i][2:]
-        y[i] = data[i][1]
+        if len(data[i]) == 0:
+            pass
+        else:
+            x[i] = data[i][2:]
+            y[i] = data[i][1]
+
+    x = x.astype(np.float32)
+    y = y.astype(np.float32)
     return x, y
 
 
@@ -37,8 +45,8 @@ def run_nnet(x, y, gpu):
     :param gpu:use gpu optimization
     :return: model
     """
-    if gpu:
-        os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+    #if gpu:
+    #    os.environ['CUDA_VISIBLE_DEVICES'] = '1'
     # Create model.
     model = Sequential()
     dim1 = len(x)
@@ -56,11 +64,12 @@ def run_nnet(x, y, gpu):
     model.add(Dense(20, kernel_initializer='random_uniform', activation='relu'))
     model.add(Dense(1, kernel_initializer='random_uniform'))
     # Set the optimizer.
-    sgd = optimizers.SGD(lr=0.01, clipnorm=1.)
+    #sgd = optimizers.SGD(lr=0.01, clipnorm=2.)#, momentum=0.1, nesterov=True)
+    sgd = optimizers.Adagrad(lr=0.01, clipnorm=2.)
     # Compile model.
     model.compile(loss='mse', optimizer=sgd, metrics=["mae"])
     # Fit the model.
-    model.fit(x, y, epochs=20, batch_size=100, verbose=2, validation_split=0.2)
+    model.fit(x, y, epochs=200, batch_size=2000, verbose=2, validation_split=0.2)
     return model
 
 
