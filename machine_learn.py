@@ -87,6 +87,8 @@ def run_nnet(x, y, gpu):
     model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
     model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
     model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
     model.add(Dense(1, kernel_initializer='random_uniform'))
     # Set the optimizer.
     #sgd = optimizers.SGD(lr=0.01, clipnorm=2.)#, momentum=0.1, nesterov=True)
