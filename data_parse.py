@@ -130,7 +130,7 @@ def write_data(data):
     Writes the unlabeled data to a csv file.
     :param data: data to write
     """
-    with open("data.csv", "w+") as data_file:
+    with open("data.csv", "w+", newline='') as data_file:
         writer = csv.writer(data_file)
         for row in data:
             writer.writerow(row)
@@ -151,9 +151,9 @@ def read_data(file):
                 if item == 0:
                     new_row.append(dateutil.parser.parse(row[item]))
                 # Convert boolean strings to booleans.
-                elif row[item]== "True":
+                elif row[item] == "True":
                     new_row.append(True)
-                elif row[item] =="False":
+                elif row[item] == "False":
                     new_row.append(False)
                 else:
                     new_row.append(float(row[item]))
@@ -176,7 +176,7 @@ if __name__ == '__main__':
     # Do we train?
     if not args.no:
         # Read in data.
-        d = read_data("data.csv")[10100:80100] #edit dataset size here
+        d = read_data("data.csv")[5000:] #edit dataset size here
         x, y = machine_learn.format_data(d)
         model = machine_learn.run_nnet(x, y, args.gpu)
         # Save the model.

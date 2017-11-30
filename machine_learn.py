@@ -26,11 +26,8 @@ def format_data(data):
     y = np.zeros((m, 1))
 
     for i in range(m):
-        if len(data[i]) == 0:
-            pass
-        else:
-            x[i] = data[i][2:]
-            y[i] = data[i][1]
+        x[i] = data[i][2:]
+        y[i] = data[i][1]
 
     x = x.astype(np.float32)
     y = y.astype(np.float32)
@@ -45,8 +42,6 @@ def run_nnet(x, y, gpu):
     :param gpu:use gpu optimization
     :return: model
     """
-    #if gpu:
-    #    os.environ['CUDA_VISIBLE_DEVICES'] = '1'
     # Create model.
     model = Sequential()
     dim1 = len(x)
@@ -59,17 +54,25 @@ def run_nnet(x, y, gpu):
     model.add(Dense(80, kernel_initializer='random_uniform', activation='relu'))
     model.add(Dense(100, kernel_initializer='random_uniform', activation='relu'))
     model.add(Dense(150, kernel_initializer='random_uniform', activation='relu'))
+    model.add(Dense(300, kernel_initializer='random_uniform', activation='relu'))
     model.add(Dense(180, kernel_initializer='random_uniform', activation='relu'))
     model.add(Dense(30, kernel_initializer='random_uniform', activation='relu'))
     model.add(Dense(20, kernel_initializer='random_uniform', activation='relu'))
     model.add(Dense(1, kernel_initializer='random_uniform'))
     # Set the optimizer.
     #sgd = optimizers.SGD(lr=0.01, clipnorm=2.)#, momentum=0.1, nesterov=True)
-    sgd = optimizers.Adagrad(lr=0.01, clipnorm=2.)
+    sgd = optimizers.Adagrad(clipnorm=2.)
+    #sgd = optimizers.Adadelta(clipnorm=2.)
     # Compile model.
-    model.compile(loss='mse', optimizer=sgd, metrics=["mae"])
-    # Fit the model.
-    model.fit(x, y, epochs=200, batch_size=2000, verbose=2, validation_split=0.2)
+    model.compile(loss='mae', optimizer=sgd)#, metrics=["mae"])
+    if gpu:
+        # Fit the model.
+        # DO NOT CHANGE GPU BATCH SIZE, CAN CAUSE MEMORY ISSUES
+        model.fit(x, y, epochs=100, batch_size=4096, verbose=2)  # , validation_split=0.2)
+    else:
+        # Fit the model.
+        # Feel free to change this batch size.
+        model.fit(x, y, epochs=20, batch_size=1000, verbose=2)  # , validation_split=0.2)
     return model
 
 
@@ -158,10 +161,12 @@ def forward_predict(x, y, initial_date, model, periods):
         initial_date = initial_date+timedelta(minutes=15)
         # Add each prediction
         predictions.append(last)
-        if i> 0:
-            y= np.append(y, [last])
+        if i > 0:
+            y = np.append(y, [last])
+            y = y.astype(np.float32)
         new = add_generate_NN_features(y, new, holidays)
         x = np.append(x, [new], axis=0)
+        x = x.astype(np.float32)
         print("Forecast number: " + str(i+1)+" of "+str(periods)+" Predicted val: "+str(last))
     return predictions
 
@@ -177,7 +182,7 @@ if __name__ == "__main__":
     x, y = format_data(d)
     print("Evaluating model...")
     evaluation = model.evaluate(x=x, y=y, verbose=1, batch_size=300)
-    print("Loss(mse): "+str(evaluation[0])+"     Mean Absolute Error: " + str(evaluation[1]))
+    print("Loss(mae): "+str(evaluation))
 
     # Plot the predictions.
     periods = 96
