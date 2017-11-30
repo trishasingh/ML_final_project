@@ -19,6 +19,7 @@ def parse_csv(file):
     :return: array of data
     """
     with open(file, newline='\n') as csv_file:
+    #with open(file, newline='\n') as csv_file:
         reader = csv.reader(csv_file)
         data = []
         i = 0
