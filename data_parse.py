@@ -167,6 +167,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--skip', "-s", dest='skip', action='store_true', help="use to skip creation of data file")
     parser.add_argument('--gpu', "-g", dest='gpu', action='store_true', help="use gpu optimization")
+    parser.add_argument('--model', "-m", dest='model', action='store', default='', help="path to model being retrained")
     parser.add_argument('--no_train', "-n", dest='no', action='store_true', help="use to skip training")
     args = parser.parse_args()
     # Do we want to skip?
@@ -179,6 +180,6 @@ if __name__ == '__main__':
         # Read in data.
         d = read_data("data.csv")[5000:] #edit dataset size here
         x, y = machine_learn.format_data(d)
-        model = machine_learn.run_nnet(x, y, args.gpu)
+        model = machine_learn.run_nnet(x, y, args.gpu, args.model)
         # Save the model.
         model.save("models/model_"+datetime.datetime.now().strftime("%Y-%m-%d_%H_%M_%S") +".h5")
