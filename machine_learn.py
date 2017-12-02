@@ -223,11 +223,12 @@ if __name__ == "__main__":
     # Plot the predictions.
     periods = 96*7
     predictions = model.predict(x)
+    plt.plot(predictions, 'r', label="prediction")
+    # Ceck to see if we want to forecast
     if not args.no:
         forecast = forward_predict(np.copy(x[:(stop-start)//2]), np.copy(y[:(stop-start)//2]), d[(stop-start)//2][0], model, periods)
-    plt.plot(predictions, 'r', label="prediction")
+        plt.plot([((stop - start) // 2) + i for i in range(len(forecast))], forecast, 'b', label="forecast")
 
-    plt.plot([((stop-start)//2) + i for i in range(len(forecast))], forecast, 'b', label="forecast")
     plt.plot(y, 'g', label='actual', linewidth=.5)
     leg = plt.legend()
     plt.show()
