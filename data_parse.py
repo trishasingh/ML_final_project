@@ -36,8 +36,8 @@ def parse_csv(file):
         # Parse the data.
         date = dateutil.parser.parse(row[1]+" "+row[2])
         power_kw = float(row[3])
-        power_solar = float(row[4])
-        data_final.append([date, power_kw -power_solar])
+        #power_solar = float(row[4])
+        data_final.append([date, power_kw ])#-power_solar])
 
     return data_final
 

@@ -85,7 +85,7 @@ def run_nnet(x, y, gpu, m):
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
-        model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
+        model.add(Dense(400, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
@@ -99,11 +99,11 @@ def run_nnet(x, y, gpu, m):
         sgd = optimizers.Adagrad(clipnorm=2.)
         #sgd = optimizers.Adadelta(clipnorm=2.)
         # Compile model.
-        model.compile(loss='mae', optimizer=sgd)#, metrics=["mae"])
+        model.compile(loss='mse', optimizer=sgd)#, metrics=["mae"])
     if gpu:
         # Fit the model.
         # DO NOT CHANGE GPU BATCH SIZE, CAN CAUSE MEMORY ISSUES
-        model.fit(x, y, epochs=50, batch_size=2048, verbose=2)  # , validation_split=0.2)
+        model.fit(x, y, epochs=200, batch_size=2048, verbose=2)  # , validation_split=0.2)
     else:
         # Fit the model.
         # Feel free to change this batch size.
