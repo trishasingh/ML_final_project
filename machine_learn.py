@@ -209,6 +209,7 @@ def forward_predict(x, y, initial_date, model, periods):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', "-m", dest='model', action='store', required=True, help="path to model being used")
+    parser.add_argument('--no_forecast', "-n", dest='no', action='store_true', help="use to skip forecasting")
     args = parser.parse_args()
     model = load_model(args.model)
     start = 50000
@@ -220,9 +221,10 @@ if __name__ == "__main__":
     print("Loss(mae): "+str(evaluation))
 
     # Plot the predictions.
-    periods = 96
+    periods = 96*7
     predictions = model.predict(x)
-    forecast = forward_predict(np.copy(x[:(stop-start)//2]), np.copy(y[:(stop-start)//2]), d[(stop-start)//2][0], model, periods)
+    if not args.no:
+        forecast = forward_predict(np.copy(x[:(stop-start)//2]), np.copy(y[:(stop-start)//2]), d[(stop-start)//2][0], model, periods)
     plt.plot(predictions, 'r', label="prediction")
 
     plt.plot([((stop-start)//2) + i for i in range(len(forecast))], forecast, 'b', label="forecast")
