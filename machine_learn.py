@@ -120,6 +120,10 @@ def add_generate_NN_features(x, data, holidays): # based off features used in Ga
     """
     if len(x) < 96*4:
         raise IndexError("Too Few x's")
+    minute = data[0].minute
+    # Booleans for minute of the hour, only have data for 0, 15, 30, 45 minute markers
+    for m in [0, 15, 30, 45]:
+        data.append(minute == m)
     hour = data[0].hour
     # Booleans for hour of the day.
     for h in range(24):
@@ -169,7 +173,7 @@ def add_generate_NN_features(x, data, holidays): # based off features used in Ga
         data.append(pc2)
     # Load of the same hour on the same weekday in previous 4 weeks.
     pd = []
-    for pd1 in range(4):
+    for pd1 in range(6):
         pd.append(0)
         pd[pd1] = float(x[- 96 * 7 * (pd1 + 1)])
     for pd2 in pd:
