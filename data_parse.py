@@ -126,7 +126,19 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
                 pd[pd1] = float(data[i - 96 * 7 * (pd1 + 1)][1])
         for pd2 in pd:
             data[i].append(pd2)
-
+        # add max, min, avg for that day of the week in the 4 previous weeks
+        for wk in range(4):
+            prevwkd = []
+            if i > 96*8*(wk+1):
+                for pday in range(96*6*(wk+1),96*8*(wk+1),1):
+                    if data[i][0].weekday() == data[i-pday][0].weekday():
+                        prevwkd.append(data[i-pday][1])
+                    pvwkdMax = max(prevwkd)
+                    pvwkdMin = min(prevwkd)
+                    pvwkdAvg = sum(prevwkd)/len(prevwkd)
+                    data[i].append(pvwkdMax)
+                    data[i].append(pvwkdMin)
+                    data[i].append(pvwkdAvg)
     return data
 
 
