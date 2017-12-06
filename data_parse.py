@@ -133,12 +133,14 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
                 pOfDay = ((data[i][0].minute/15)+1)*(data[i][0].hour + 1) - 1
                 for pd3 in range(96*6*(wk+1)+pOfDay, 96*7*(wk+1)+pOfDay, 1):
                     prevwkd.append(data[i-pd3][1])
-                    pwkdMax = max(prevwkd)
-                    pwkdMin = min(prevwkd)
-                    pwkdAvg = sum(prevwkd)/len(prevwkd)
-                    data[i].append(pwkdMax)
-                    data[i].append(pwkdMin)
-                    data[i].append(pwkdAvg)
+            else:
+                prevwkd.append(0)
+            pwkdMax = max(prevwkd)
+            pwkdMin = min(prevwkd)
+            pwkdAvg = sum(prevwkd)/len(prevwkd)
+            data[i].append(pwkdMax)
+            data[i].append(pwkdMin)
+            data[i].append(pwkdAvg)
     return data
 
 
