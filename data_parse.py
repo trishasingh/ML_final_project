@@ -64,6 +64,10 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
     :return: features
     """
     for i in range(len(data)):
+        minute = data[i][0].minute
+        # Booleans for minute of the hour, only have data for 0, 15, 30, 45 minute markers
+        for m in [0,15,30,45]:
+            data[i].append(minute == m)
         hour = data[i][0].hour
         # Booleans for hour of the day.
         for h in range(24):
@@ -116,9 +120,9 @@ def generate_NN_features(data, holidays): # based off features used in Gajownicz
             data[i].append(pc2)
         # Load of the same hour on the same weekday in previous 4 weeks.
         pd = []
-        for pd1 in range(4):
+        for pd1 in range(6):
             pd.append(0)
-            if i > 96 * 7 * (pc1 + 1):
+            if i > 96 * 7 * (pd1 + 1):
                 pd[pd1] = float(data[i - 96 * 7 * (pd1 + 1)][1])
         for pd2 in pd:
             data[i].append(pd2)
