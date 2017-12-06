@@ -8,7 +8,7 @@ import argparse
 import machine_learn
 
 seed = 7 #fix random seed for reproducibility
-np.random.seed(seed)
+#np.random.seed(seed)
 
 MAX_LOAD = 621
 

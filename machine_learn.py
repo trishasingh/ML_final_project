@@ -81,6 +81,7 @@ def run_nnet(x, y, gpu, m):
 
         # Tuning
         model.add(Dense(dim1, input_dim=dim2, kernel_initializer='random_uniform', activation='relu'))
+        model.add(Dense(400, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
@@ -89,8 +90,10 @@ def run_nnet(x, y, gpu, m):
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
+        model.add(Dense(400, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
+        model.add(Dense(400, kernel_initializer='random_uniform', activation='relu'))
         #model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
         #model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(1, kernel_initializer='random_uniform'))
@@ -238,13 +241,20 @@ if __name__ == "__main__":
     print("Loss(mae): "+str(evaluation))
 
     # Plot the predictions.
-    periods = 96
+    periods = 96*7
     predictions = model.predict(x)
     plt.plot(predictions, 'r', label="prediction")
     # Check to see if we want to forecast
     if not args.no:
         forecast = forward_predict(np.copy(x[:(stop-start)//2]), np.copy(y[:(stop-start)//2]), d[(stop-start)//2][0], model, periods)
-        plt.plot([((stop - start) // 2) + i for i in range(len(forecast))], forecast, 'b', label="forecast")
+        x_vals = [((stop - start) // 2) + i for i in range(len(forecast))]
+        err = 0
+        for i in range(len(x_vals)):
+            err += (y[x_vals[i]] - forecast[i])**2
+        err = err/len(x_vals)
+        print("Forecast error: {}".format(err))
+        plt.plot(x_vals, forecast, 'b', label="forecast")
+
 
     plt.plot(y, 'g', label='actual', linewidth=.5)
     leg = plt.legend()
