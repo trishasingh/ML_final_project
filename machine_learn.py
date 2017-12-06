@@ -181,7 +181,7 @@ def add_generate_NN_features(x, data, holidays): # based off features used in Ga
     # add max, min, avg for that day of the week in the 4 previous weeks
     for wk in range(4):
         prevwkd = []
-        pOfDay = ((data[0].minute / 15) + 1) * (data[0].hour + 1) - 1  # period of day
+        pOfDay = ((data[0].minute // 15) + 1) * (data[0].hour + 1) - 1  # period of day
         for pd3 in range(96 * 6 * (wk + 1) + pOfDay, 96 * 7 * (wk + 1) + pOfDay, 1):  # append loads to an array
             prevwkd.append(float(x[- pd3]))
         else:
@@ -238,7 +238,7 @@ if __name__ == "__main__":
     print("Loss(mae): "+str(evaluation))
 
     # Plot the predictions.
-    periods = 96*7
+    periods = 96
     predictions = model.predict(x)
     plt.plot(predictions, 'r', label="prediction")
     # Check to see if we want to forecast
