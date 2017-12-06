@@ -178,7 +178,20 @@ def add_generate_NN_features(x, data, holidays): # based off features used in Ga
         pd[pd1] = float(x[- 96 * 7 * (pd1 + 1)])
     for pd2 in pd:
         data.append(pd2)
-
+    # add max, min, avg for that day of the week in the 4 previous weeks
+    for wk in range(4):
+        prevwkd = []
+        pOfDay = ((data[0].minute / 15) + 1) * (data[0].hour + 1) - 1  # period of day
+        for pd3 in range(96 * 6 * (wk + 1) + pOfDay, 96 * 7 * (wk + 1) + pOfDay, 1):  # append loads to an array
+            prevwkd.append(float(x[- pd3]))
+        else:
+            prevwkd.append(0)
+        pwkdMax = max(prevwkd)
+        pwkdMin = min(prevwkd)
+        pwkdAvg = sum(prevwkd) / len(prevwkd)
+        data.append(pwkdMax)
+        data.append(pwkdMin)
+        data.append(pwkdAvg)
     return data[1:]
 
 
