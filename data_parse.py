@@ -198,6 +198,6 @@ if __name__ == '__main__':
         # Read in data.
         d = read_data("data.csv")[5000:] #edit dataset size here
         x, y = machine_learn.format_data(d)
-        model = machine_learn.run_nnet(x, y, args.gpu, args.model)
+        model = machine_learn.run_nnet(x[:-96], y[96:], args.gpu, args.model)
         # Save the model.
         model.save("models/model_"+datetime.datetime.now().strftime("%Y-%m-%d_%H_%M_%S") +".h5")

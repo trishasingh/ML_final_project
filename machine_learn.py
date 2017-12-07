@@ -186,14 +186,16 @@ def forward_predict(x, y, initial_date, model, periods):
     holidays = set(data_parse.parse_holidays("USBankholidays.txt"))
     for i in range(periods):
         p = model.predict(x)
-        last = p[-1]
+        last = p[-96]
         new = [initial_date+timedelta(minutes=15)]
         initial_date = initial_date+timedelta(minutes=15)
         # Add each prediction
         predictions.append(last)
-        if i > 0:
-            y = np.append(y, [last])
-            y = y.astype(np.float32)
+        #if i > 0:
+            #y = np.append(y, [last])
+            #y = y.astype(np.float32)
+        y = np.append(y, [last])
+        y = y.astype(np.float32)
         new = add_generate_NN_features(y, new, holidays)
         x = np.append(x, [new], axis=0)
         x = x.astype(np.float32)
@@ -207,22 +209,25 @@ if __name__ == "__main__":
     parser.add_argument('--no_forecast', "-n", dest='no', action='store_true', help="use to skip forecasting")
     args = parser.parse_args()
     model = load_model(args.model)
-    start = 56004
-    stop = 76004
+    start = 50004
+    stop = 70004
     d = data_parse.read_data("data.csv")[start:stop]
     x, y = format_data(d)
+    d = d[96:]
+    x = x[:-96]
+    y = y[96:]
     print("Evaluating model...")
     evaluation = model.evaluate(x=x, y=y, verbose=1, batch_size=300)
     print("Loss(mae): "+str(evaluation))
 
     # Plot the predictions.
-    periods = 96*7
+    periods = 96*31
     predictions = model.predict(x)
     plt.plot(predictions, 'r', label="prediction")
     # Check to see if we want to forecast
     if not args.no:
         forecast = forward_predict(np.copy(x[:(stop-start)//2]), np.copy(y[:(stop-start)//2]), d[(stop-start)//2][0], model, periods)
-        x_vals = [((stop - start) // 2) + i for i in range(len(forecast))]
+        x_vals = [((stop - start) // 2) + i - 96 for i in range(len(forecast))]
         err = 0
         for i in range(len(x_vals)):
             err += (y[x_vals[i]] - forecast[i])**2
