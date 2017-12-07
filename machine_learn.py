@@ -60,13 +60,14 @@ def run_nnet(x, y, gpu, m):
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(400, kernel_initializer='random_uniform', activation='relu'))
-        model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
-        model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
-        model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
-        model.add(Dense(400, kernel_initializer='random_uniform', activation='relu'))
+        model.add(Dense(10000, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(400, kernel_initializer='random_uniform', activation='relu'))
+        model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
+        model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
+        model.add(Dense(400, kernel_initializer='random_uniform', activation='relu'))
+        model.add(Dense(10000, kernel_initializer='random_uniform', activation='relu'))
         #model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
         #model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(1, kernel_initializer='random_uniform'))
@@ -80,7 +81,7 @@ def run_nnet(x, y, gpu, m):
     if gpu:
         # Fit the model.
         # DO NOT CHANGE GPU BATCH SIZE, CAN CAUSE MEMORY ISSUES
-        model.fit(x, y, epochs=30, batch_size=256, verbose=2)  # , validation_split=0.2)
+        model.fit(x, y, epochs=50, batch_size=512, verbose=2)  # , validation_split=0.2)
     else:
         # Fit the model.
         # Feel free to change this batch size.
