@@ -35,8 +35,8 @@ def parse_csv(file):
 def monthSeparate(data):
     """
 
-    :param data:
-    :return:
+    :param data: parsed data
+    :return: array of arrays separated by month
     """
     data_final = []
     for yr in [2014,2015]:
@@ -51,11 +51,11 @@ def monthSeparate(data):
 def checkThreshold(data,threshold):
     """
 
-    :param data:
+    :param data: monthly array of arrays
     :param threshold:
     :return:
     """
-
+    #for i in range
 
 
 if __name__ == '__main__':
