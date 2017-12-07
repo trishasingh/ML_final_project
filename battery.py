@@ -32,6 +32,22 @@ def parse_csv(file):
 
     return data_final
 
+def monthSeparate(data):
+    """
+
+    :param data:
+    :return:
+    """
+    data_final = []
+    for yr in [2014,2015]:
+        for mon in range(1,13,1):
+            data_final.append([])
+            ind = (yr - 2014)*12 + mon - 1
+            for i in range(len(data)):
+                if data[i][0].year == yr and data[i][0].month == mon:
+                    data_final[ind].append(data[i])
+    return data_final
+
 def checkThreshold(data,threshold):
     """
 
@@ -43,4 +59,6 @@ def checkThreshold(data,threshold):
 
 
 if __name__ == '__main__':
+
     site1 = parse_csv("site_1.csv")
+    ms = monthSeparate(site1)
