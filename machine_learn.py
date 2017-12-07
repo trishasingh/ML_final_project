@@ -52,33 +52,6 @@ def run_nnet(x, y, gpu, m):
         dim1 = len(x)
         dim2 = len(x[0])
         # Add the layers.
-        # model.add(Dense(dim1, input_dim=dim2, kernel_initializer='random_uniform', activation='relu'))
-        # model.add(Dense(120, kernel_initializer='random_uniform', activation='relu'))
-        # model.add(Dense(60, kernel_initializer='random_uniform', activation='relu'))
-        # model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
-        # model.add(Dense(80, kernel_initializer='random_uniform', activation='relu'))
-        # model.add(Dense(100, kernel_initializer='random_uniform', activation='relu'))
-        # model.add(Dense(150, kernel_initializer='random_uniform', activation='relu'))
-        # model.add(Dense(300, kernel_initializer='random_uniform', activation='relu'))
-        # model.add(Dense(180, kernel_initializer='random_uniform', activation='relu'))
-        # model.add(Dense(30, kernel_initializer='random_uniform', activation='relu'))
-        # model.add(Dense(20, kernel_initializer='random_uniform', activation='relu'))
-        # model.add(Dense(1, kernel_initializer='random_uniform'))
-        # # Set the optimizer.
-        # #sgd = optimizers.SGD(lr=0.01, clipnorm=2.)#, momentum=0.1, nesterov=True)
-        # sgd = optimizers.Adagrad(clipnorm=2.)
-        # #sgd = optimizers.Adadelta(clipnorm=2.)
-        # # Compile model.
-        # model.compile(loss='mae', optimizer=sgd)#, metrics=["mae"])
-        # if gpu:
-        #     # Fit the model.
-        #     # DO NOT CHANGE GPU BATCH SIZE, CAN CAUSE MEMORY ISSUES
-        #     model.fit(x, y, epochs=100, batch_size=4096, verbose=2)  # , validation_split=0.2)
-        # else:
-        #     # Fit the model.
-        #     # Feel free to change this batch size.
-        #     model.fit(x, y, epochs=20, batch_size=1000, verbose=2)  # , validation_split=0.2)
-
         # Tuning
         model.add(Dense(dim1, input_dim=dim2, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(400, kernel_initializer='random_uniform', activation='relu'))
@@ -107,7 +80,7 @@ def run_nnet(x, y, gpu, m):
     if gpu:
         # Fit the model.
         # DO NOT CHANGE GPU BATCH SIZE, CAN CAUSE MEMORY ISSUES
-        model.fit(x, y, epochs=200, batch_size=512, verbose=2)  # , validation_split=0.2)
+        model.fit(x, y, epochs=30, batch_size=256, verbose=2)  # , validation_split=0.2)
     else:
         # Fit the model.
         # Feel free to change this batch size.
