@@ -60,14 +60,14 @@ def run_nnet(x, y, gpu, m):
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(400, kernel_initializer='random_uniform', activation='relu'))
-        model.add(Dense(10000, kernel_initializer='random_uniform', activation='relu'))
+        model.add(Dense(1000, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(400, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(400, kernel_initializer='random_uniform', activation='relu'))
-        model.add(Dense(10000, kernel_initializer='random_uniform', activation='relu'))
+        #model.add(Dense(10000, kernel_initializer='random_uniform', activation='relu'))
         #model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
         #model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(1, kernel_initializer='random_uniform'))
@@ -207,8 +207,8 @@ if __name__ == "__main__":
     parser.add_argument('--no_forecast', "-n", dest='no', action='store_true', help="use to skip forecasting")
     args = parser.parse_args()
     model = load_model(args.model)
-    start = 50000
-    stop = 70000
+    start = 56004
+    stop = 76004
     d = data_parse.read_data("data.csv")[start:stop]
     x, y = format_data(d)
     print("Evaluating model...")
