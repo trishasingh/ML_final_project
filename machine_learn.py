@@ -99,14 +99,15 @@ def run_nnet(x, y, gpu, m):
         model.add(Dense(1, kernel_initializer='random_uniform'))
         # Set the optimizer.
         #sgd = optimizers.SGD(lr=0.01, clipnorm=2.)#, momentum=0.1, nesterov=True)
-        sgd = optimizers.Adagrad(clipnorm=2.)
+        #sgd = optimizers.Adagrad(clipnorm=2.)
+        sgd = optimizers.Adam()
         #sgd = optimizers.Adadelta(clipnorm=2.)
         # Compile model.
         model.compile(loss='mse', optimizer=sgd)#, metrics=["mae"])
     if gpu:
         # Fit the model.
         # DO NOT CHANGE GPU BATCH SIZE, CAN CAUSE MEMORY ISSUES
-        model.fit(x, y, epochs=200, batch_size=2048, verbose=2)  # , validation_split=0.2)
+        model.fit(x, y, epochs=200, batch_size=512, verbose=2)  # , validation_split=0.2)
     else:
         # Fit the model.
         # Feel free to change this batch size.
