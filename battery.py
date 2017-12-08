@@ -187,6 +187,8 @@ if __name__ == '__main__':
 
     site1 = parse_csv("site_1.csv")
     ms1 = monthSeparate(site1)
+    site2 = parse_csv("site_2.csv")
+    ms2 = monthSeparate(site2)
     inc = 25
     small = 25
     dur = 10
@@ -204,8 +206,6 @@ if __name__ == '__main__':
         print("net profit = $" + str(b[0][i2]))
     print()
     print()
-    site2 = parse_csv("site_2.csv")
-    ms2 = monthSeparate(site2)
     e = loopSizes(ms2, 500, 2014, dur, smallest=small, increment=inc)
     print("site 2 using 2014 data:")
     for i3 in range(len(e[0])):
