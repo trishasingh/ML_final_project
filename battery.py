@@ -205,7 +205,7 @@ if __name__ == '__main__':
     # n1 = netGain(d, y)
     # print(n1)
     # print(c)
-    a = loopSizes(ms, 500, 2014, 7)
+    a = loopSizes(ms, 500, 2014, 25)
     for i in range(len(a[0])):
         print("size = " + str(200 + i*50))
         print("net profit = " + str(a[0][i]))
