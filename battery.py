@@ -32,6 +32,48 @@ def parse_csv(file):
 
     return data_final
 
+
+def costsSaved(shaved, year, duration, peakRate = 18, discount = .05, rateInflation = .02):
+    """
+    Assumption: the operator of the battery has a really good prediction and can perfectly set peak threshold
+    :param shaved: data for amount possible to shave per month for one building for two years
+    :param year: 2014 or 2015, need to choose one year's data to replicate
+    :param duration: length of time in years that will project cost savings for
+    :param peakRate: rate per peak kW in dollars
+    :param discount: annual discount rate for the building owner to invest in battery
+    :param rateInflation: expected peak rate increases annually
+    :return: present value dollar amount for costs saved from peak shaving
+    """
+    if year == 2014:
+        shaved = shaved[:12]
+    if year == 2015:
+        shaved = shaved[12:]
+    mlyDiscount = (1 + discount) ** (1/12)
+    mlyInflation = (1 + rateInflation) ** (1/12)
+    for i in range(duration-1):
+        for i2 in range(len(shaved)):
+            shaved.append(shaved[i2])
+    save = []
+    for n in range(len(shaved)):
+        d = (peakRate*(mlyInflation ** n) * shaved[n]) / (mlyDiscount ** n)
+        save.append(d)
+    pv = sum(save)
+    return pv
+
+
+def netGain(saved, size, price = 500):
+    """
+    Assumption : peak kW of battery = 1/2 kWh
+    :param saved: costs saved from peak shaving
+    :param size: size of battery in kWh
+    :param price: price per kWh of battery
+    :return: net profit in present value
+    """
+    batteryCost = size * price
+    net = saved - batteryCost
+    return net
+
+
 def monthSeparate(data):
     """
 
@@ -48,16 +90,6 @@ def monthSeparate(data):
                     data_final[ind].append(data[i])
     return data_final
 
-def testDeltas(month, y):
-    """
-    :param month: one month's energy usage data from monthSeparate
-    :param y: kwH of battery
-    :return: nothing for now
-    """
-    for i in range(0, 105, 5):
-        m = peakShaved(month, y, i)
-        print("Shaved by: " + str(i) + " kw")
-        print(str(m[0]) + " in period " + str(m[1]))
 
 def testDeltaMonth(month, y):
     """
@@ -67,8 +99,8 @@ def testDeltaMonth(month, y):
     :return: max amount able to peak shave for that month
     """
     maxShaved = 0
-    for i in range(0,205,5):
-        m = peakShaved(month,y,i)
+    for i in range(0, y+5, 5):
+        m = peakShaved(month, y, i)
         if m[0]:
             maxShaved = i
     return maxShaved
@@ -81,9 +113,10 @@ def testSize(data,y):
     """
     shavedByMonth = []
     for i in range(len(data)):
-        x = testDeltaMonth(data[i],y)
+        x = testDeltaMonth(data[i], y)
         shavedByMonth.append(x)
     return shavedByMonth
+
 
 def peakShaved(data, y, delta):
     """
@@ -124,6 +157,28 @@ def peakShaved(data, y, delta):
     return worked, period
 
 
+def loopSizes(data, largest, year, duration, smallest = 200, increment = 50, price = 500, peakRate = 18, discount = .05, rateInflation = .02):
+    """
+    :param data: monthlySeparated data for site
+    :param largest: largest battery size feasible
+    :param smallest: smallest battery size available, standard is 200 kWh for tesla powerpack
+    :param increment: size intervals that you can buy a pack in, let's say 50 is standard
+    :param price: price of battery per kWh
+    :param peakRate:
+    :param discount:
+    :param rateInflation:
+    :return: array of net profits, array of costs saved
+    """
+    saved = []
+    nets = []
+    for size in range(smallest, largest + increment, increment):
+        a = testSize(data, size)
+        c = costsSaved(a, year, duration, peakRate, discount, rateInflation)
+        n = netGain(c,size,price)
+        saved.append(c)
+        nets.append(n)
+    return nets, saved
+
 
 if __name__ == '__main__':
 
@@ -131,10 +186,23 @@ if __name__ == '__main__':
     ms = monthSeparate(site1)
     y = 200
     a = testSize(ms, y)
-    print(a[:12])
-    print(a[12:])
+    # print(a[:12])
+    # print(a[12:])
+    # print()
+    # z = 400
+    # b = testSize(ms, z)
+    # print(b[:12])
+    # print(b[12:])
+    c = costsSaved(a, 2014, 1)
+    n = netGain(c, y)
+    print(n)
     print()
-    z = 400
-    b = testSize(ms, z)
-    print(b[:12])
-    print(b[12:])
+
+    d = costsSaved(a, 2014, 10)
+    n1 = netGain(d, y)
+    print(n1)
+    # print(c)
+    # a = loopSizes(ms, 500, 2014, 1)
+    # for i in range(len(a[0])):
+    #     print("size = " + str(200 + i*50))
+    #     print("net profit = " + str(a[0][i]))
