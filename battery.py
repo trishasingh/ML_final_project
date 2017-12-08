@@ -102,7 +102,7 @@ def testDeltaMonth(month, y):
     :return: max amount able to peak shave for that month
     """
     maxShaved = 0
-    for i in range(0, y+5, 5):
+    for i in range(0, y+1, 1):
         m = peakShaved(month, y, i)
         if m[0]:
             maxShaved = i
@@ -186,9 +186,39 @@ def loopSizes(data, largest, year, duration, smallest = 200, increment = 50, pri
 if __name__ == '__main__':
 
     site1 = parse_csv("site_1.csv")
-    ms = monthSeparate(site1)
-    y = 200
-    #a = testSize(ms, y)
+    ms1 = monthSeparate(site1)
+    inc = 25
+    small = 25
+    dur = 10
+    a = loopSizes(ms1, 500, 2014, dur, smallest=small, increment=inc)
+    print("site 1 using 2014 data:")
+    for i1 in range(len(a[0])):
+        print("size = " + str(small + i1*inc))
+        print("net profit = $" + str(a[0][i1]))
+    b = loopSizes(ms1, 500, 2015, dur, smallest=small, increment=inc)
+    print()
+    print()
+    print("site 1 using 2015 data:")
+    for i2 in range(len(b[0])):
+        print("size = " + str(small + i2*inc))
+        print("net profit = $" + str(b[0][i2]))
+    print()
+    print()
+    site2 = parse_csv("site_2.csv")
+    ms2 = monthSeparate(site2)
+    e = loopSizes(ms2, 500, 2014, dur, smallest=small, increment=inc)
+    print("site 2 using 2014 data:")
+    for i3 in range(len(e[0])):
+        print("size = " + str(small + i3 * inc))
+        print("net profit = $" + str(e[0][i3]))
+    f = loopSizes(ms2, 500, 2015, dur, smallest=small, increment=inc)
+    print()
+    print()
+    print("site 2 using 2015 data:")
+    for i4 in range(len(f[0])):
+        print("size = " + str(small + i4 * inc))
+        print("net profit = $" + str(f[0][i4]))
+    # a = testSize(ms, y)
     # print(a[:12])
     # print(a[12:])
     # print()
@@ -205,7 +235,3 @@ if __name__ == '__main__':
     # n1 = netGain(d, y)
     # print(n1)
     # print(c)
-    a = loopSizes(ms, 500, 2014, 25)
-    for i in range(len(a[0])):
-        print("size = " + str(200 + i*50))
-        print("net profit = " + str(a[0][i]))
