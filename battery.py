@@ -51,12 +51,15 @@ def costsSaved(shaved, year, duration, peakRate = 18, discount = .05, rateInflat
     mlyDiscount = (1 + discount) ** (1/12)
     mlyInflation = (1 + rateInflation) ** (1/12)
     for i in range(duration-1):
-        for i2 in range(len(shaved)):
+        for i2 in range(12):
             shaved.append(shaved[i2])
     save = []
-    for n in range(len(shaved)):
-        d = (peakRate*(mlyInflation ** n) * shaved[n]) / (mlyDiscount ** n)
-        save.append(d)
+    for s in range(len(shaved)):
+        ir = (peakRate*(mlyInflation ** s))
+        dr = mlyDiscount ** s
+        s2 = shaved[s]
+        d1 = ir * s2 / dr
+        save.append(d1)
     pv = sum(save)
     return pv
 
@@ -185,7 +188,7 @@ if __name__ == '__main__':
     site1 = parse_csv("site_1.csv")
     ms = monthSeparate(site1)
     y = 200
-    a = testSize(ms, y)
+    #a = testSize(ms, y)
     # print(a[:12])
     # print(a[12:])
     # print()
@@ -193,16 +196,16 @@ if __name__ == '__main__':
     # b = testSize(ms, z)
     # print(b[:12])
     # print(b[12:])
-    c = costsSaved(a, 2014, 1)
-    n = netGain(c, y)
-    print(n)
-    print()
-
-    d = costsSaved(a, 2014, 10)
-    n1 = netGain(d, y)
-    print(n1)
+    # c = costsSaved(a, 2014, 1)
+    # n = netGain(c, y)
+    # print(n)
+    # print()
+    #
+    # d = costsSaved(a, 2014, 10)
+    # n1 = netGain(d, y)
+    # print(n1)
     # print(c)
-    # a = loopSizes(ms, 500, 2014, 1)
-    # for i in range(len(a[0])):
-    #     print("size = " + str(200 + i*50))
-    #     print("net profit = " + str(a[0][i]))
+    a = loopSizes(ms, 500, 2014, 7)
+    for i in range(len(a[0])):
+        print("size = " + str(200 + i*50))
+        print("net profit = " + str(a[0][i]))
