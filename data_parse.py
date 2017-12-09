@@ -52,7 +52,9 @@ def parse_holidays(file):
         reader = csv.reader(csv_file)
         holidays = []
         for row in reader:
-            holidays.append(dateutil.parser.parse(row[1]).date())
+            date = dateutil.parser.parse(row[1]).date()
+            date = date - datetime.timedelta(days=1)
+            holidays.append(date)
         return holidays
 
 
@@ -196,7 +198,7 @@ if __name__ == '__main__':
     # Do we train?
     if not args.no:
         # Read in data.
-        d = read_data("data.csv")[5000:] #edit dataset size here
+        d = read_data("data.csv")[10000:] #edit dataset size here
         x, y = machine_learn.format_data(d)
         model = machine_learn.run_nnet(x[:-96], y[96:], args.gpu, args.model)
         # Save the model.

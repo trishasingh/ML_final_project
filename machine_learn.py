@@ -34,6 +34,9 @@ def format_data(data):
     y = y.astype(np.float32)
     return x, y
 
+def percent_err(y_true, y_pred):
+    err = abs(y_true - y_pred)
+    return err/y_true
 
 def run_nnet(x, y, gpu, m):
     """
@@ -77,11 +80,11 @@ def run_nnet(x, y, gpu, m):
         sgd = optimizers.Adam()
         #sgd = optimizers.Adadelta(clipnorm=2.)
         # Compile model.
-        model.compile(loss='mse', optimizer=sgd)#, metrics=["mae"])
+        model.compile(loss='mse', optimizer=sgd, metrics=["mae", percent_err])
     if gpu:
         # Fit the model.
         # DO NOT CHANGE GPU BATCH SIZE, CAN CAUSE MEMORY ISSUES
-        model.fit(x, y, epochs=50, batch_size=512, verbose=2)  # , validation_split=0.2)
+        model.fit(x, y, epochs=50, batch_size=512, verbose=2 , validation_split=0.2)
     else:
         # Fit the model.
         # Feel free to change this batch size.
@@ -209,8 +212,8 @@ if __name__ == "__main__":
     parser.add_argument('--no_forecast', "-n", dest='no', action='store_true', help="use to skip forecasting")
     args = parser.parse_args()
     model = load_model(args.model)
-    start = 50004
-    stop = 70004
+    start = 5000
+    stop = 10000
     d = data_parse.read_data("data.csv")[start:stop]
     x, y = format_data(d)
     d = d[96:]
