@@ -8,7 +8,7 @@ import argparse
 import machine_learn
 
 seed = 7 #fix random seed for reproducibility
-#np.random.seed(seed)
+np.random.seed(seed)
 
 MAX_LOAD = 621
 
@@ -53,7 +53,7 @@ def parse_holidays(file):
         holidays = []
         for row in reader:
             date = dateutil.parser.parse(row[1]).date()
-            date = date - datetime.timedelta(days=1)
+            #date = date - datetime.timedelta(days=1)
             holidays.append(date)
         return holidays
 
@@ -198,7 +198,7 @@ if __name__ == '__main__':
     # Do we train?
     if not args.no:
         # Read in data.
-        d = read_data("data.csv")[10000:] #edit dataset size here
+        d = read_data("data.csv")[4000:] #edit dataset size here
         x, y = machine_learn.format_data(d)
         model = machine_learn.run_nnet(x[:-96], y[96:], args.gpu, args.model)
         # Save the model.
