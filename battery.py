@@ -3,6 +3,7 @@ import datetime
 import dateutil.parser
 import numpy as np
 
+
 def parse_csv(file):
     """
     parse data from CSV files into an array
@@ -33,12 +34,13 @@ def parse_csv(file):
     return data_final
 
 
-def costsSaved(shaved, year, duration, peakRate = 18, discount = .05, rateInflation = .02):
+def costsSaved(shaved, year, duration, accuracy, peakRate = 18, discount = .05, rateInflation = .02):
     """
     Assumption: the operator of the battery has a really good prediction and can perfectly set peak threshold
     :param shaved: data for amount possible to shave per month for one building for two years
     :param year: 2014 or 2015, need to choose one year's data to replicate
     :param duration: length of time in years that will project cost savings for
+    :param accuracy: percent accuracy that the operator will be able to set the threshold
     :param peakRate: rate per peak kW in dollars
     :param discount: annual discount rate for the building owner to invest in battery
     :param rateInflation: expected peak rate increases annually
@@ -59,6 +61,7 @@ def costsSaved(shaved, year, duration, peakRate = 18, discount = .05, rateInflat
         dr = mlyDiscount ** s
         s2 = shaved[s]
         d1 = ir * s2 / dr
+        d1 = d1*accuracy
         save.append(d1)
     pv = sum(save)
     return pv
@@ -126,7 +129,7 @@ def peakShaved(data, y, delta):
     :param data: one month's energy usage data from monthSeparate
     :param y: battery size in kWh
     :param delta: difference between month's peak and the threshold in kw
-    :return:
+    :return: boolean of whether it worked for that threshold and period that it failed in (or last period)
     """
     worked = True
     period = "all"
@@ -160,7 +163,7 @@ def peakShaved(data, y, delta):
     return worked, period
 
 
-def loopSizes(data, largest, year, duration, smallest = 200, increment = 50, price = 500, peakRate = 18, discount = .05, rateInflation = .02):
+def loopSizes(data, largest, year, duration, accuracy, smallest = 200, increment = 50, price = 500, peakRate = 18, discount = .05, rateInflation = .02):
     """
     :param data: monthlySeparated data for site
     :param largest: largest battery size feasible
@@ -176,7 +179,7 @@ def loopSizes(data, largest, year, duration, smallest = 200, increment = 50, pri
     nets = []
     for size in range(smallest, largest + increment, increment):
         a = testSize(data, size)
-        c = costsSaved(a, year, duration, peakRate, discount, rateInflation)
+        c = costsSaved(a, year, duration, accuracy, peakRate, discount, rateInflation)
         n = netGain(c,size,price)
         saved.append(c)
         nets.append(n)
@@ -192,6 +195,8 @@ if __name__ == '__main__':
     inc = 25
     small = 25
     dur = 10
+    s1Accuracy = 100-15.6
+    s2Accuracy = 100-21.3
     a = loopSizes(ms1, 500, 2014, dur, smallest=small, increment=inc)
     print("site 1 using 2014 data:")
     for i1 in range(len(a[0])):
