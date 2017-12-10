@@ -2,6 +2,7 @@
 # Graham, Trisha, Jonah
 from keras.models import Sequential
 from keras.layers import Dense
+from keras.layers import Dropout
 from keras.layers import LSTM
 import numpy as np
 import argparse
@@ -63,8 +64,10 @@ def run_nnet(x, y, gpu, m):
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(400, kernel_initializer='random_uniform', activation='relu'))
+        model.add(Dropout(0.1, noise_shape=None, seed=None))
         model.add(Dense(1000, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
+        model.add(Dropout(0.1, noise_shape=None, seed=None))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(400, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(200, kernel_initializer='random_uniform', activation='relu'))
@@ -74,6 +77,8 @@ def run_nnet(x, y, gpu, m):
         #model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
         #model.add(Dense(50, kernel_initializer='random_uniform', activation='relu'))
         model.add(Dense(1, kernel_initializer='random_uniform'))
+
+
         # Set the optimizer.
         #sgd = optimizers.SGD(lr=0.01, clipnorm=2.)#, momentum=0.1, nesterov=True)
         #sgd = optimizers.Adagrad(clipnorm=2.)
@@ -211,7 +216,7 @@ if __name__ == "__main__":
     parser.add_argument('--model', "-m", dest='model', action='store', required=True, help="path to model being used")
     parser.add_argument('--no_forecast', "-n", dest='no', action='store_true', help="use to skip forecasting")
     args = parser.parse_args()
-    model = load_model(args.model)
+    model = load_model(args.model, custom_objects={'percent_err' : percent_err})
     start = 5000
     stop = 10000
     d = data_parse.read_data("data.csv")[start:stop]
@@ -221,7 +226,7 @@ if __name__ == "__main__":
     y = y[96:]
     print("Evaluating model...")
     evaluation = model.evaluate(x=x, y=y, verbose=1, batch_size=300)
-    print("Loss(mae): "+str(evaluation))
+    print("Loss(mse): {}  metrics MAE: {} err : {}".format(*evaluation))
 
     # Plot the predictions.
     periods = 96*31
