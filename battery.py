@@ -28,8 +28,8 @@ def parse_csv(file):
         # Parse the data.
         date = dateutil.parser.parse(row[1]+" "+row[2])
         power_kw = float(row[3])
-        #power_solar = float(row[4])
-        data_final.append([date, power_kw ])#-power_solar])
+        power_solar = float(row[4])
+        data_final.append([date, power_kw - power_solar])
 
     return data_final
 
@@ -44,7 +44,7 @@ def costsSaved(shaved, year, duration, accuracy, peakRate = 18, discount = .05, 
     :param peakRate: rate per peak kW in dollars
     :param discount: annual discount rate for the building owner to invest in battery
     :param rateInflation: expected peak rate increases annually
-    :return: present value dollar amount for costs saved from peak shaving
+    :return: present value dollar amount for costs saved from peak shaving, future value of costs saved
     """
     if year == 2014:
         shaved = shaved[:12]
@@ -55,16 +55,19 @@ def costsSaved(shaved, year, duration, accuracy, peakRate = 18, discount = .05, 
     for i in range(duration-1):
         for i2 in range(12):
             shaved.append(shaved[i2])
-    save = []
+    pvSave = []
+    fSave = []
     for s in range(len(shaved)):
         ir = (peakRate*(mlyInflation ** s))
         dr = mlyDiscount ** s
         s2 = shaved[s]
         d1 = ir * s2 / dr
         d1 = d1*accuracy
-        save.append(d1)
-    pv = sum(save)
-    return pv
+        pvSave.append(d1)
+        fSave.append(s2*ir)
+    fval = sum(fSave)
+    presval = sum(pvSave)
+    return presval, fval
 
 
 def netGain(saved, size, price = 500):
@@ -145,8 +148,8 @@ def peakShaved(data, y, delta):
         if x > thresh:  # if need to drain
             b -= x - thresh  # kw above thresh
             a -= (x - thresh)/4  # drained kWh from battery
-        if thresh - x > 20:  # assuming that our prediction will be this good and we are safe to charge
-            da = thresh - x - 20
+        if thresh - x > 5:  # leaves a buffer for charging, though operator should be able to respond in real time with perfect accuracy
+            da = thresh - x - 5
             if da > b:
                 da = b
             a += da/4
@@ -180,8 +183,8 @@ def loopSizes(data, largest, year, duration, accuracy, smallest = 200, increment
     for size in range(smallest, largest + increment, increment):
         a = testSize(data, size)
         c = costsSaved(a, year, duration, accuracy, peakRate, discount, rateInflation)
-        n = netGain(c,size,price)
-        saved.append(c)
+        n = netGain(c[0],size,price)
+        saved.append(c[1])
         nets.append(n)
     return nets, saved
 
@@ -195,34 +198,42 @@ if __name__ == '__main__':
     inc = 25
     small = 25
     dur = 10
-    s1Accuracy = 100-15.6
-    s2Accuracy = 100-21.3
-    a = loopSizes(ms1, 500, 2014, dur, smallest=small, increment=inc)
+    s1Accuracy = 1-.156
+    s2Accuracy = 1-.213
+    a = loopSizes(ms1, 500, 2014, dur, s1Accuracy, smallest=small, increment=inc)
     print("site 1 using 2014 data:")
     for i1 in range(len(a[0])):
         print("size = " + str(small + i1*inc))
-        print("net profit = $" + str(a[0][i1]))
-    b = loopSizes(ms1, 500, 2015, dur, smallest=small, increment=inc)
+        print("pv net profit = $" + str(a[0][i1]))
+        print("battery cost = $" +str((small + i1*inc)*500))
+        print("future savings: $" + str(a[1][i1]))
+    b = loopSizes(ms1, 500, 2015, dur, s1Accuracy, smallest=small, increment=inc)
     print()
     print()
     print("site 1 using 2015 data:")
     for i2 in range(len(b[0])):
         print("size = " + str(small + i2*inc))
-        print("net profit = $" + str(b[0][i2]))
+        print("pv net profit = $" + str(b[0][i2]))
+        print("battery cost = $" +str((small + i2*inc)*500))
+        print("future savings: $" + str(b[1][i2]))
     print()
     print()
-    e = loopSizes(ms2, 500, 2014, dur, smallest=small, increment=inc)
+    e = loopSizes(ms2, 500, 2014, dur, s2Accuracy, smallest=small, increment=inc)
     print("site 2 using 2014 data:")
     for i3 in range(len(e[0])):
         print("size = " + str(small + i3 * inc))
-        print("net profit = $" + str(e[0][i3]))
-    f = loopSizes(ms2, 500, 2015, dur, smallest=small, increment=inc)
+        print("pv net profit = $" + str(e[0][i3]))
+        print("battery cost = $" +str((small + i3*inc)*500))
+        print("future savings: $" + str(e[1][i3]))
+    f = loopSizes(ms2, 500, 2015, dur, s2Accuracy, smallest=small, increment=inc)
     print()
     print()
     print("site 2 using 2015 data:")
     for i4 in range(len(f[0])):
         print("size = " + str(small + i4 * inc))
-        print("net profit = $" + str(f[0][i4]))
+        print("pv net profit = $" + str(f[0][i4]))
+        print("battery cost = $" +str((small + i4*inc)*500))
+        print("future savings: $" + str(f[1][i4]))
     # a = testSize(ms, y)
     # print(a[:12])
     # print(a[12:])
