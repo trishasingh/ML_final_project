@@ -1,3 +1,8 @@
+# Forecasting enegry demand using convolutional neural nets
+The problem that we chose to investigate was how to choose the optimal battery size for a commercial
+building for the purpose of peak shaving. We used data for two sites over 2 years for 15 minute periods, 
+with 70,176 observations per site. Our [paper](./final-report.pdf) outlines our method and results.
+
 # Instructions for running
 
     To install requirements call
